@@ -4,6 +4,7 @@ export type userRegisterType = {
   email: string;
   username: string;
   password: string;
+  confirm_password?: string;
 };
 export type userLoginType = {
   email: string;
@@ -27,7 +28,8 @@ export interface changePasswordType {
 
 export interface AuthContextType {
   user: null | userDataType;
-  errorMsg: unknown;
+  loading: boolean;
+  errorMsg: any;
   loginUser: (userData: userLoginType) => Promise<{ success: boolean }>;
   registerUser: (
     userData: userRegisterType

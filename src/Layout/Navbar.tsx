@@ -1,7 +1,15 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import DarkMode from "../Component/DarkMode";
+import { Heart } from "lucide-react";
+import useAuthContext from "../Hooks/useAuthContext";
 
 const Navbar = () => {
+  const { user, logoutUser } = useAuthContext();
+  const currentLocation = useLocation();
+
+  const handleLogout = () => {
+    logoutUser();
+  };
   return (
     <>
       <div className="navbar bg-base-100 shadow-sm fixed top-0 z-50">
@@ -26,83 +34,104 @@ const Navbar = () => {
             <ul
               tabIndex={0}
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-              <li>
-                <a>Item 1</a>
-              </li>
-              <li>
-                <a>Parent</a>
-                <ul className="p-2">
+              {user && (
+                <li>
+                  <Link to="/dashboard" className="">
+                    Dashboard
+                  </Link>
+                </li>
+              )}
+
+              {currentLocation.pathname !== "/dashboard" && (
+                <>
                   <li>
-                    <a>Submenu 1</a>
+                    <a href="#benefits">Benefits</a>
                   </li>
                   <li>
-                    <a>Submenu 2</a>
+                    <a href="#statistics">Statistics</a>
                   </li>
-                </ul>
-              </li>
-              <li>
-                <a>Item 3</a>
-              </li>
+                  <li>
+                    <a href="#testimonials">Testimonials</a>
+                  </li>
+                  <li>
+                    <a href="#contact">Contact</a>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
-          <Link to="/" className="btn btn-ghost text-xl">
+          <Link to="/" className="btn btn-ghost text-xl text-primary">
+            <Heart className="h-6 w-6 fill-primary stroke-white mr-2" />
             Hemolyze
           </Link>
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
-            <li>
-              <a>Item 1</a>
-            </li>
-            <li>
-              <details>
-                <summary>Parent</summary>
-                <ul className="p-2">
-                  <li>
-                    <a>Submenu 1</a>
-                  </li>
-                  <li>
-                    <a>Submenu 2</a>
-                  </li>
-                </ul>
-              </details>
-            </li>
-            <li>
-              <a>Item 3</a>
-            </li>
+            {user && (
+              <li>
+                <Link to="/dashboard" className="">
+                  Dashboard
+                </Link>
+              </li>
+            )}
+            {currentLocation.pathname !== "/dashboard" && (
+              <>
+                <li>
+                  <a href="#benefits">Benefits</a>
+                </li>
+                <li>
+                  <a href="#statistics">Statistics</a>
+                </li>
+                <li>
+                  <a href="#testimonials">Testimonials</a>
+                </li>
+                <li>
+                  <a href="#contact">Contact</a>
+                </li>
+              </>
+            )}
           </ul>
         </div>
         <div className="navbar-end">
-          <div className="dropdown dropdown-end">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost btn-circle avatar">
-              <div className="w-10 rounded-full">
-                <img
-                  alt="Tailwind CSS Navbar component"
-                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                />
+          {user ? (
+            <div className="dropdown dropdown-end">
+              <div
+                tabIndex={0}
+                role="button"
+                className="btn btn-ghost btn-circle avatar">
+                <div className="w-10 rounded-full">
+                  <img
+                    alt="Tailwind CSS Navbar component"
+                    src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                  />
+                </div>
               </div>
+              <ul
+                tabIndex={0}
+                className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                <li>
+                  <DarkMode />
+                  <a className="justify-between">
+                    Profile
+                    <span className="badge">New</span>
+                  </a>
+                </li>
+                <li>
+                  <a>Settings</a>
+                </li>
+                <li>
+                  <a onClick={handleLogout}>Logout</a>
+                </li>
+              </ul>
             </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-              <li>
-                <DarkMode />
-                <a className="justify-between">
-                  Profile
-                  <span className="badge">New</span>
-                </a>
-              </li>
-              <li>
-                <a>Settings</a>
-              </li>
-              <li>
-                <a>Logout</a>
-              </li>
-            </ul>
-          </div>
+          ) : (
+            <div className="flex items-center gap-2 justify-center">
+              <DarkMode />
+              <Link to="/login" className="btn btn-primary text-white">
+                Login
+              </Link>{" "}
+            </div>
+          )}
         </div>
       </div>
       <div className="h-16"></div>

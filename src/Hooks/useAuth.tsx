@@ -99,12 +99,14 @@ const useAuth = () => {
       localStorage.setItem("authTokens", JSON.stringify(response.data));
       // after Login
       await fetchUserProfile();
-      setLoading(false);
+
       return { success: true };
     } catch (error: any) {
       console.log(error);
       setErrorMsg(error?.response?.data?.detail);
       return { success: false };
+    } finally {
+      setLoading(false);
     }
   };
 
