@@ -4,17 +4,18 @@ import { useForm } from "react-hook-form";
 import { userRegisterType } from "../globalType/AuthType";
 import useAuthContext from "../Hooks/useAuthContext";
 export default function RegisterPage() {
-  const { errorMsg, loading } = useAuthContext();
+  const { errorMsg, loading, registerUser } = useAuthContext();
   const {
     handleSubmit,
     register,
+    watch,
     formState: { errors },
   } = useForm<userRegisterType>();
 
   const onSubmit = async (data: userRegisterType): Promise<void> => {
-    console.log("before delete data:-", data);
     delete data.confirm_password;
-    console.log("after delete data:-", data);
+    const response = await registerUser(data);
+    console.log(response);
   };
 
   return (
@@ -109,7 +110,9 @@ export default function RegisterPage() {
                     className="input input-bordered w-full pl-10"
                     placeholder="••••••••"
                     minLength={8}
-                    {...register("password", { required: true })}
+                    {...register("password", {
+                      required: true,
+                    })}
                   />
                   {errors.password && (
                     <span className="text-error text-sm">
@@ -138,11 +141,16 @@ export default function RegisterPage() {
                     autoComplete="new-password"
                     className="input input-bordered w-full pl-10"
                     placeholder="••••••••"
-                    {...register("confirm_password", { required: true })}
+                    {...register("confirm_password", {
+                      required: true,
+                      validate: (value) =>
+                        value === watch("password") ||
+                        "The passwords do not match",
+                    })}
                   />
                   {errors.confirm_password && (
                     <span className="text-error text-sm">
-                      This field is required
+                      {errors.confirm_password.message}
                     </span>
                   )}
                 </div>

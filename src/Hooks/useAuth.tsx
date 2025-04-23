@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import apiClient from "../Service/apiClient";
 import {
   changePasswordType,
+  resetPasswordConfirmType,
   userDataType,
   userLoginType,
   userRegisterType,
 } from "../globalType/AuthType";
+import authApiClient from "../Service/authApiClient";
 
 const useAuth = () => {
   const [user, setUser] = useState<userDataType | null>(null);
@@ -86,6 +88,42 @@ const useAuth = () => {
     }
   };
 
+  // Reset Password
+
+  const resetPassword = async (email: string) => {
+    setErrorMsg("");
+    setLoading(true);
+    try {
+      await apiClient.post("/auth/users/reset_password/", { email });
+      return {
+        success: true,
+        message:
+          "Password reset link sent to your email. Please check your inbox.",
+      };
+    } catch (error) {
+      return handleAPIError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // reset Password confirm
+  const resetPasswordConfirm = async (
+    data: resetPasswordConfirmType
+  ): Promise<{ success: boolean; message: string }> => {
+    setErrorMsg("");
+    console.log("resetPasswordConfirm", data);
+    setLoading(true);
+    try {
+      await authApiClient.post("/auth/users/reset_password_confirm/", data);
+      return { success: true, message: "Password changed successfully" };
+    } catch (error) {
+      return handleAPIError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Login User
   const loginUser = async (
     userData: userLoginType
@@ -155,6 +193,8 @@ const useAuth = () => {
     registerUser,
     logoutUser,
     changePassword,
+    resetPassword,
+    resetPasswordConfirm,
   };
 };
 

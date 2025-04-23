@@ -22,8 +22,15 @@ export interface childrenType {
 }
 
 export interface changePasswordType {
+  email: string;
   new_password: string;
   current_password: string;
+}
+
+export interface resetPasswordConfirmType {
+  uid: string;
+  token: string;
+  new_password: string;
 }
 
 export interface AuthContextType {
@@ -37,5 +44,11 @@ export interface AuthContextType {
   logoutUser: () => void;
   changePassword: (
     data: changePasswordType
+  ) => Promise<{ success: boolean; message: string } | undefined>;
+  resetPassword: (
+    email: string
+  ) => Promise<{ success: boolean; message: string } | undefined>;
+  resetPasswordConfirm: (
+    data: resetPasswordConfirmType
   ) => Promise<{ success: boolean; message: string } | undefined>;
 }
