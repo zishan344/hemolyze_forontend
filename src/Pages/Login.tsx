@@ -3,7 +3,7 @@ import { userLoginType } from "../globalType/AuthType";
 import useAuthContext from "../Hooks/useAuthContext";
 
 const Login = () => {
-  const { user, errorMsg, loginUser } = useAuthContext();
+  const { loginUser } = useAuthContext();
   const {
     register,
     handleSubmit,

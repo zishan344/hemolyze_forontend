@@ -8,20 +8,21 @@ import Dashboard from "../Pages/Dashboard";
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route element={<MainLayout />}>
-        <Route path="/" element={<Home />} />
+      <Route path="/" element={<MainLayout />}>
+        <Route index element={<Home />} />
         <Route path="/login" element={<Login />} />
         {/* Add more routes here as needed */}
+        <Route
+          path="dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }>
+          <Route index element={<Dashboard />} />
+        </Route>
       </Route>
-      <Route
-        path="dashboard"
-        element={
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        }>
-        <Route index element={<Dashboard />} />
-      </Route>
+
       <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>
   );
