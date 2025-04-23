@@ -1,7 +1,4 @@
-import type React from "react";
-
-import { useState } from "react";
-import { Heart, User, Mail, Lock, ArrowRight } from "lucide-react";
+import { User, Mail, Lock, ArrowRight } from "lucide-react";
 import { Link } from "react-router";
 import { useForm } from "react-hook-form";
 import { userRegisterType } from "../globalType/AuthType";
