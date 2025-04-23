@@ -12,7 +12,9 @@ import authApiClient from "../Service/authApiClient";
 const useAuth = () => {
   const [user, setUser] = useState<userDataType | null>(null);
   const [errorMsg, setErrorMsg] = useState<unknown | string>("");
+  const [successMsg, setSuccessMsg] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+
   const getToken = () => {
     const token = localStorage.getItem("authTokens");
     return token ? JSON.parse(token) : null;
@@ -22,6 +24,14 @@ const useAuth = () => {
   useEffect(() => {
     if (authTokens) fetchUserProfile();
   }, [authTokens]);
+
+  const handleSuccess = (message: string) => {
+    setSuccessMsg(message);
+    // Clear success message after 3 seconds
+    setTimeout(() => {
+      setSuccessMsg("");
+    }, 3000);
+  };
 
   const handleAPIError = (
     error: any,
@@ -112,10 +122,14 @@ const useAuth = () => {
     data: resetPasswordConfirmType
   ): Promise<{ success: boolean; message: string }> => {
     setErrorMsg("");
-    console.log("resetPasswordConfirm", data);
+
     setLoading(true);
     try {
-      await authApiClient.post("/auth/users/reset_password_confirm/", data);
+      const response = await authApiClient.post(
+        "/auth/users/reset_password_confirm/",
+        data
+      );
+      handleSuccess("Password changed successfully");
       return { success: true, message: "Password changed successfully" };
     } catch (error) {
       return handleAPIError(error);
@@ -188,6 +202,7 @@ const useAuth = () => {
   return {
     user,
     errorMsg,
+    successMsg,
     loginUser,
     loading,
     registerUser,

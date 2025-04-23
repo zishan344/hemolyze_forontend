@@ -2,6 +2,7 @@ import { ArrowLeft, KeyRound } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useAuthContext from "../Hooks/useAuthContext";
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 
 type PasswordResetConfirmFormType = {
   new_password: string;
@@ -10,8 +11,10 @@ type PasswordResetConfirmFormType = {
 
 const PasswordResetConfirm = () => {
   const { uid, token } = useParams();
+  const [resetSuccess, setResetSuccess] = useState<boolean>();
   const navigate = useNavigate();
-  const { errorMsg, loading, resetPasswordConfirm } = useAuthContext();
+  const { successMsg, errorMsg, loading, resetPasswordConfirm } =
+    useAuthContext();
   const {
     register,
     handleSubmit,
@@ -32,9 +35,10 @@ const PasswordResetConfirm = () => {
       const response = await resetPasswordConfirm(resetConfirmData);
 
       if (response?.success) {
+        setResetSuccess(true);
         setTimeout(() => {
           navigate("/login");
-        }, 3000);
+        }, 5000);
       }
     } catch (err) {
       console.error("Error resetting password:", err);
@@ -57,7 +61,13 @@ const PasswordResetConfirm = () => {
               <span>{errorMsg}</span>
             </div>
           )}
-
+          {resetSuccess && (
+            <div className="space-y-6">
+              <div className="alert alert-success">
+                <span>{successMsg}! Redirecting to login...</span>
+              </div>
+            </div>
+          )}
           <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-4">
               <div>
@@ -144,14 +154,6 @@ const PasswordResetConfirm = () => {
               </Link>
             </div>
           </form>
-
-          {errorMsg === "Password changed successfully" && (
-            <div className="space-y-6">
-              <div className="alert alert-success">
-                <span>Password reset successful! Redirecting to login...</span>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

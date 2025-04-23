@@ -36,7 +36,8 @@ export interface resetPasswordConfirmType {
 export interface AuthContextType {
   user: null | userDataType;
   loading: boolean;
-  errorMsg: any;
+  errorMsg: string;
+  successMsg: string;
   loginUser: (userData: userLoginType) => Promise<{ success: boolean }>;
   registerUser: (
     userData: userRegisterType
