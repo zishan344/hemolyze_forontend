@@ -8,6 +8,7 @@ import Register from "../Pages/Register";
 import ForgotPassword from "../Pages/ForgotPassword";
 import ActivateAccount from "../Component/Registration/ActivateAccount";
 import PasswordResetConfirm from "../Pages/PasswordResetConfirm";
+import Profile from "../Pages/Profile";
 
 const AppRoutes = () => {
   return (
@@ -32,6 +33,7 @@ const AppRoutes = () => {
           }>
           <Route index element={<Dashboard />} />
         </Route>
+        <Route path="profile" element={<Profile />} />
       </Route>
 
       <Route path="*" element={<div>404 Not Found</div>} />

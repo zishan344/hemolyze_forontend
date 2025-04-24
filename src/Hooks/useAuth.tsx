@@ -4,6 +4,7 @@ import {
   changePasswordType,
   resetPasswordConfirmType,
   userDataType,
+  UserDetails,
   userLoginType,
   userRegisterType,
 } from "../globalType/AuthType";
@@ -11,6 +12,7 @@ import authApiClient from "../Service/authApiClient";
 
 const useAuth = () => {
   const [user, setUser] = useState<userDataType | null>(null);
+  const [userDetail, setUserDetail] = useState<UserDetails | null>(null);
   const [errorMsg, setErrorMsg] = useState<unknown | string>("");
   const [successMsg, setSuccessMsg] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -54,12 +56,36 @@ const useAuth = () => {
   const fetchUserProfile = async () => {
     setLoading(true);
     try {
-      const response = await apiClient.get("/auth/users/me", {
-        headers: { Authorization: `JWT ${authTokens?.access}` },
-      });
+      const response = await authApiClient.get("/auth/users/me");
       setUser(response.data);
     } catch (error) {
       console.log("fetchUserProfile error", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // fetch user detail
+  const fetchUserDetails = async () => {
+    setLoading(true);
+    try {
+      const response = await authApiClient.get("/user-details/");
+      setUserDetail(response.data);
+    } catch (error) {
+      console.log("fetchUserProfile error", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // update user ProfileDetail
+  const updateUserProfileDetail = async () => {
+    setLoading(true);
+    try {
+      const response = await authApiClient.post("/user-details/");
+      setUserDetail(response.data);
+    } catch (error) {
+      console.log("fetchUserProfileDetails error", error);
     } finally {
       setLoading(false);
     }
@@ -129,6 +155,7 @@ const useAuth = () => {
         "/auth/users/reset_password_confirm/",
         data
       );
+      console.log(response);
       handleSuccess("Password changed successfully");
       return { success: true, message: "Password changed successfully" };
     } catch (error) {

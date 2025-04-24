@@ -17,6 +17,15 @@ export type userDataType = {
   email: string;
 };
 
+export interface UserDetails {
+  name: string;
+  address: string;
+  age?: number;
+  blood_group: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
+  phone_number?: string;
+  availability_status: boolean;
+}
+
 export interface childrenType {
   children: React.ReactNode;
 }
@@ -37,7 +46,7 @@ export interface AuthContextType {
   user: null | userDataType;
   loading: boolean;
   errorMsg: string;
-  successMsg: string;
+  successMsg: string | undefined;
   loginUser: (userData: userLoginType) => Promise<{ success: boolean }>;
   registerUser: (
     userData: userRegisterType

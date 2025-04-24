@@ -8,9 +8,9 @@ export default authApiClient;
 
 authApiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("authTokens");
     if (token) {
-      config.headers.Authorization = `JWT ${token}`;
+      config.headers.Authorization = `JWT ${JSON.parse(token)?.access}`;
     }
     return config;
   },
