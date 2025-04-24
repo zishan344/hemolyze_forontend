@@ -33,11 +33,11 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          {errorMsg && (
+          {errorMsg ? (
             <div className="alert alert-error">
-              <span>{errorMsg}</span>
+              <span>{String(errorMsg)}</span>
             </div>
-          )}
+          ) : null}
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router";
 import DarkMode from "../Component/DarkMode";
-import { Heart } from "lucide-react";
+import { Heart, Users } from "lucide-react";
 import useAuthContext from "../Hooks/useAuthContext";
 
 const Navbar = () => {
@@ -42,6 +42,13 @@ const Navbar = () => {
                 </li>
               )}
 
+              <li>
+                <Link to="/available-donors" className="flex items-center">
+                  <Users size={16} className="mr-2" />
+                  Available Donors
+                </Link>
+              </li>
+
               {currentLocation.pathname !== "/dashboard" && (
                 <>
                   <li>
@@ -74,6 +81,14 @@ const Navbar = () => {
                 </Link>
               </li>
             )}
+
+            <li>
+              <Link to="/available-donors" className="flex items-center">
+                <Users size={16} className="mr-2" />
+                Available Donors
+              </Link>
+            </li>
+
             {currentLocation.pathname !== "/dashboard" && (
               <>
                 <li>

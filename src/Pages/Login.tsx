@@ -38,11 +38,11 @@ const Login = () => {
               </p>
             </div>
 
-            {errorMsg && (
+            {errorMsg ? (
               <div className="alert alert-error">
-                <span>{errorMsg}</span>
+                <span>{String(errorMsg)}</span>
               </div>
-            )}
+            ) : null}
 
             <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-4">

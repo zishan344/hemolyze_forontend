@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router";
 import apiClient from "../../Service/apiClient";
 import ErrorAlert from "../ErrorAlert";
 
@@ -11,10 +11,10 @@ const ActivateAccount = () => {
   useEffect(() => {
     apiClient
       .post("/auth/users/activation/", { uid, token })
-      .then((res: any) => {
+      .then(() => {
         setMessage("Account activated successfully");
       })
-      .catch((err: any) => {
+      .catch(() => {
         setError("Something Went Wrong. Account activation failed");
       });
   }, [uid, token]);

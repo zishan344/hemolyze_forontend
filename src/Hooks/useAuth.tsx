@@ -4,7 +4,8 @@ import {
   changePasswordType,
   resetPasswordConfirmType,
   userDataType,
-  UserDetails,
+  UserDetailsDataType,
+  UserDetailsType,
   userLoginType,
   userRegisterType,
 } from "../globalType/AuthType";
@@ -12,7 +13,9 @@ import authApiClient from "../Service/authApiClient";
 
 const useAuth = () => {
   const [user, setUser] = useState<userDataType | null>(null);
-  const [userDetail, setUserDetail] = useState<UserDetails | null>(null);
+  const [userDetail, setUserDetail] = useState<UserDetailsDataType | null>(
+    null
+  );
   const [errorMsg, setErrorMsg] = useState<unknown | string>("");
   const [successMsg, setSuccessMsg] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -24,7 +27,10 @@ const useAuth = () => {
 
   const [authTokens, setAuthTokens] = useState(getToken());
   useEffect(() => {
-    if (authTokens) fetchUserProfile();
+    if (authTokens) {
+      fetchUserProfile();
+      fetchUserDetails();
+    }
   }, [authTokens]);
 
   const handleSuccess = (message: string) => {
@@ -70,22 +76,34 @@ const useAuth = () => {
     setLoading(true);
     try {
       const response = await authApiClient.get("/user-details/");
-      setUserDetail(response.data);
+      setUserDetail(response.data[0]);
     } catch (error) {
-      console.log("fetchUserProfile error", error);
+      console.log("fetchUserDetails error", error);
     } finally {
       setLoading(false);
     }
   };
 
   // update user ProfileDetail
-  const updateUserProfileDetail = async () => {
+  const updateUserProfileDetails = async (
+    data: UserDetailsType,
+    id: number | null = null
+  ): Promise<{ success: boolean; message: string }> => {
     setLoading(true);
     try {
-      const response = await authApiClient.post("/user-details/");
-      setUserDetail(response.data);
+      if (id) {
+        await authApiClient.put(`/user-details/${id}`, data);
+        await fetchUserDetails();
+        return { success: true, message: "Profile updated successfully" };
+      } else {
+        await authApiClient.post("/user-details/", data);
+        await fetchUserDetails();
+        return { success: true, message: "Profile updated successfully" };
+      }
     } catch (error) {
       console.log("fetchUserProfileDetails error", error);
+      handleAPIError(error);
+      return { success: false, message: "Failed to update profile" };
     } finally {
       setLoading(false);
     }
@@ -234,6 +252,8 @@ const useAuth = () => {
     loading,
     registerUser,
     logoutUser,
+    updateUserProfileDetails,
+    userDetail,
     changePassword,
     resetPassword,
     resetPasswordConfirm,

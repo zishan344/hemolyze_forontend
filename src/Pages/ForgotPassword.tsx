@@ -50,11 +50,11 @@ export default function ForgotPassword() {
             </p>
           </div>
 
-          {errorMsg && (
+          {errorMsg ? (
             <div className="alert alert-error" role="alert">
-              <span>{errorMsg}</span>
+              <span>{String(errorMsg)}</span>
             </div>
-          )}
+          ) : null}
 
           {success ? (
             <div className="space-y-6">

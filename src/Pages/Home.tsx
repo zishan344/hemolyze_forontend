@@ -1,28 +1,73 @@
-import Benefit from "../Component/Home/Benefit";
-import CTA from "../Component/Home/CTA";
+import { useEffect, useState } from "react";
 import Hero from "../Component/Home/Hero";
+import Benefit from "../Component/Home/Benefit";
 import Statistics from "../Component/Home/Statistics";
+import CTA from "../Component/Home/CTA";
 import Testimonials from "../Component/Home/Testimonials";
+import AvailableDonorsPreview from "../Component/Home/AvailableDonorsPreview";
+import DonationModal from "../Component/Payment/DonationModal";
+import {
+  getActiveSpecialEvent,
+  shouldShowDonationModal,
+  dismissDonationModal,
+  getEventDateRange,
+  SpecialEvent,
+} from "../Service/specialEventsService";
 
-export default function Home() {
+const Home = () => {
+  const [showDonationModal, setShowDonationModal] = useState<boolean>(false);
+  const [activeEvent, setActiveEvent] = useState<SpecialEvent | null>(null);
+
+  useEffect(() => {
+    // Check if there's an active special event and if we should show the modal
+    if (shouldShowDonationModal()) {
+      const event = getActiveSpecialEvent();
+      if (event) {
+        setActiveEvent(event);
+
+        // Short delay before showing modal to avoid interrupting initial page load
+        const timer = setTimeout(() => {
+          setShowDonationModal(true);
+        }, 2000);
+
+        return () => clearTimeout(timer);
+      }
+    }
+  }, []);
+
+  // Handle modal close
+  const handleCloseModal = () => {
+    setShowDonationModal(false);
+    if (activeEvent) {
+      dismissDonationModal(activeEvent.id);
+    }
+  };
+
   return (
-    <div className="bg-base-100">
-      {/* Hero Section */}
-
+    <>
       <Hero />
-
-      {/* Benefits Section */}
-
-      <Benefit />
-
-      {/* Statistics Section */}
-
       <Statistics />
-
-      {/* Testimonials Section */}
+      <Benefit />
+      <AvailableDonorsPreview />
       <Testimonials />
-      {/* CTA Section */}
       <CTA />
-    </div>
+
+      {/* Donation modal for special events */}
+      {activeEvent && (
+        <DonationModal
+          isVisible={showDonationModal}
+          onClose={handleCloseModal}
+          title={activeEvent.modalTitle}
+          description={activeEvent.modalDescription}
+          specialEvent={{
+            name: activeEvent.name,
+            date: getEventDateRange(activeEvent),
+            icon: activeEvent.icon,
+          }}
+        />
+      )}
+    </>
   );
-}
+};
+
+export default Home;

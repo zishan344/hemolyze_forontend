@@ -56,11 +56,11 @@ const PasswordResetConfirm = () => {
             <p className="mt-2 text-gray-600">Please enter your new password</p>
           </div>
 
-          {errorMsg && (
+          {errorMsg ? (
             <div className="alert alert-error">
-              <span>{errorMsg}</span>
+              <span>{String(errorMsg)}</span>
             </div>
-          )}
+          ) : null}
           {resetSuccess && (
             <div className="space-y-6">
               <div className="alert alert-success">

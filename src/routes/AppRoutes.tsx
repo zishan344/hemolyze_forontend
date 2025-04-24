@@ -9,6 +9,11 @@ import ForgotPassword from "../Pages/ForgotPassword";
 import ActivateAccount from "../Component/Registration/ActivateAccount";
 import PasswordResetConfirm from "../Pages/PasswordResetConfirm";
 import Profile from "../Pages/Profile";
+import AvailableDonors from "../Pages/AvailableDonors";
+import DonationRequests from "../Component/Dashboard/DonationRequests";
+import DonationHistory from "../Component/Dashboard/DonationHistory";
+import PremiumMembership from "../Component/Dashboard/PremiumMembership";
+import Donation from "../Pages/Donation";
 
 const AppRoutes = () => {
   return (
@@ -18,12 +23,24 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/available-donors" element={<AvailableDonors />} />
         <Route
           path="password/reset/confirm/:uid/:token"
           element={<PasswordResetConfirm />}
         />
         <Route path="activate/:uid/:token" element={<ActivateAccount />} />
-        {/* Add more routes here as needed */}
+
+        {/* Protected Routes */}
+        <Route
+          path="donation"
+          element={
+            <PrivateRoute>
+              <Donation />
+            </PrivateRoute>
+          }
+        />
+
+        {/* Dashboard Routes */}
         <Route
           path="dashboard"
           element={
@@ -32,7 +49,11 @@ const AppRoutes = () => {
             </PrivateRoute>
           }>
           <Route index element={<Dashboard />} />
+          <Route path="requests" element={<DonationRequests />} />
+          <Route path="history" element={<DonationHistory />} />
+          <Route path="premium" element={<PremiumMembership />} />
         </Route>
+
         <Route path="profile" element={<Profile />} />
       </Route>
 

@@ -1,23 +1,59 @@
-import { Activity, DropletIcon, MapPin, Phone, Save, User } from "lucide-react";
-import React from "react";
+import {
+  Activity,
+  Delete,
+  DropletIcon,
+  MapPin,
+  Phone,
+  Save,
+  User,
+} from "lucide-react";
 import { useForm } from "react-hook-form";
-import { userDataType, UserDetails } from "../../globalType/AuthType";
+import { UserDetailsType } from "../../globalType/AuthType";
+import ErrorAlert from "../ErrorAlert";
+import { UserDetailFormProps } from "./Type/ProfileType";
 
-interface UserDetailFormProps {
-  user: userDataType | null;
-  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const UserDetailForm = ({ user, setIsEditing }: UserDetailFormProps) => {
+const UserDetailForm = ({
+  loading,
+  errorMsg,
+  isEditing,
+  user,
+  userDetail,
+  updateUserProfileDetails,
+  setIsEditing,
+}: UserDetailFormProps) => {
   const {
     register: registerDetails,
     handleSubmit: handleDetailsSubmit,
     formState: { errors: detailsErrors },
-  } = useForm<UserDetails>();
-  const onDetailsSubmit = async (data: UserDetails) => {
-    await user;
-    console.log(data); // TODO: Implement update user details API call
-    setIsEditing(false);
+  } = useForm<UserDetailsType>({
+    defaultValues: {
+      name: userDetail?.name || "",
+      address: userDetail?.address || "",
+      age: userDetail?.age || undefined,
+      blood_group: userDetail?.blood_group || undefined,
+      phone_number: userDetail?.phone_number || "",
+      availability_status: userDetail?.availability_status || false,
+    },
+  });
+  const onDetailsSubmit = async (data: UserDetailsType) => {
+    try {
+      if (!user) return;
+      if (userDetail?.user === user.id) {
+        const response = await updateUserProfileDetails(data, user.id);
+        if (response?.success) {
+          setIsEditing(false);
+        }
+      } else {
+        const response = await updateUserProfileDetails(data);
+        if (response?.success) {
+          setIsEditing(false);
+        }
+      }
+    } catch (error) {
+      console.log("Error updating user details", error);
+    } finally {
+      setIsEditing(false);
+    }
   };
   const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
   return (
@@ -148,14 +184,25 @@ const UserDetailForm = ({ user, setIsEditing }: UserDetailFormProps) => {
         </div>
       </div>
 
-      <div className="flex justify-end">
+      <div className={`flex justify-end ${isEditing ? "gap-4" : ""}`}>
         <button
+          disabled={loading}
           type="submit"
           className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90">
           <Save className="mr-2" size={16} />
-          Save Details
+          {loading ? "saving..." : "Save Details"}
         </button>
+        {isEditing && (
+          <button
+            disabled={loading}
+            onClick={() => setIsEditing(false)}
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90">
+            <Delete className="mr-2" size={16} />
+            Cancel
+          </button>
+        )}
       </div>
+      {errorMsg && <ErrorAlert error={errorMsg} />}
     </form>
   );
 };

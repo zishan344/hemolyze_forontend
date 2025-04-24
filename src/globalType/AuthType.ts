@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode } from "react";
 
 export type userRegisterType = {
   email: string;
@@ -17,18 +17,36 @@ export type userDataType = {
   email: string;
 };
 
-export interface UserDetails {
+export interface UserDetailsDataType {
+  id: number;
   name: string;
   address: string;
   age?: number;
+  blood_group: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
+  phone_number?: string;
+  last_donation_date: string;
+  availability_status: boolean;
+  user: number;
+}
+
+export interface UserDetailsType {
+  name: string;
+  address: string;
+  age: number;
   blood_group: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-";
   phone_number?: string;
   availability_status: boolean;
 }
 
 export interface childrenType {
-  children: React.ReactNode;
+  children: ReactNode;
 }
+
+/* export type childrenType = {
+  children: ReactNode;
+};
+
+ */
 
 export interface changePasswordType {
   email: string;
@@ -43,14 +61,18 @@ export interface resetPasswordConfirmType {
 }
 
 export interface AuthContextType {
-  user: null | userDataType;
+  user: userDataType | null;
   loading: boolean;
-  errorMsg: string;
-  successMsg: string | undefined;
+  errorMsg: unknown | string;
+  successMsg: string;
   loginUser: (userData: userLoginType) => Promise<{ success: boolean }>;
   registerUser: (
     userData: userRegisterType
   ) => Promise<{ success: boolean; message: string }>;
+  updateUserProfileDetails: (
+    userDetails: UserDetailsType
+  ) => Promise<{ success: boolean; message: string } | undefined>;
+  userDetail: UserDetailsDataType | null;
   logoutUser: () => void;
   changePassword: (
     data: changePasswordType

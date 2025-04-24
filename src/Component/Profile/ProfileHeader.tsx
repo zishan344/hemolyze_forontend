@@ -1,7 +1,8 @@
 import { User } from "lucide-react";
-import { userDataType } from "../../globalType/AuthType";
+import useAuthContext from "../../Hooks/useAuthContext";
 
-const ProfileHeader = ({ user }: { user: userDataType }) => {
+const ProfileHeader = () => {
+  const { user } = useAuthContext();
   return (
     <div className="bg-base-100 rounded-lg shadow-md p-6 mb-6">
       <div className="flex items-center space-x-4">
