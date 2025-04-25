@@ -14,6 +14,7 @@ import DonationRequests from "../Component/Dashboard/DonationRequests";
 import DonationHistory from "../Component/Dashboard/DonationHistory";
 import PremiumMembership from "../Component/Dashboard/PremiumMembership";
 import Donation from "../Pages/Donation";
+import DashboardLayout from "../Layout/DashboardLayout";
 
 const AppRoutes = () => {
   return (
@@ -39,24 +40,22 @@ const AppRoutes = () => {
             </PrivateRoute>
           }
         />
-
-        {/* Dashboard Routes */}
-        <Route
-          path="dashboard"
-          element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          }>
-          <Route index element={<Dashboard />} />
-          <Route path="requests" element={<DonationRequests />} />
-          <Route path="history" element={<DonationHistory />} />
-          <Route path="premium" element={<PremiumMembership />} />
-        </Route>
-
-        <Route path="profile" element={<Profile />} />
       </Route>
 
+      {/* Dashboard Routes */}
+      <Route
+        path="dashboard"
+        element={
+          <PrivateRoute>
+            <DashboardLayout />
+          </PrivateRoute>
+        }>
+        <Route index element={<Dashboard />} />
+        <Route path="requests" element={<DonationRequests />} />
+        <Route path="history" element={<DonationHistory />} />
+        <Route path="premium" element={<PremiumMembership />} />
+        <Route path="profile" element={<Profile />} />
+      </Route>
       <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>
   );

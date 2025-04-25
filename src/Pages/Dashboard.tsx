@@ -6,18 +6,11 @@ import {
   Droplet,
   Users,
 } from "lucide-react";
-import { Outlet, useLocation } from "react-router-dom";
 import useAuthContext from "../Hooks/useAuthContext";
 import DonationCTA from "../Component/Payment/DonationCTA";
 
 const Dashboard = () => {
   const { user } = useAuthContext();
-  const location = useLocation();
-
-  // Only show the dashboard overview when on the main dashboard route
-  if (location.pathname !== "/dashboard") {
-    return <Outlet />;
-  }
 
   return (
     <div className="container mx-auto">

@@ -30,14 +30,17 @@ const DashboardLayout = () => {
         } fixed h-full`}>
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-4 border-b border-base-300">
-          {isSidebarOpen ? (
-            <div className="flex items-center">
-              <Heart className="h-6 w-6 fill-primary stroke-white mr-2" />
-              <span className="text-xl font-bold text-primary">Hemolyze</span>
-            </div>
-          ) : (
-            <Heart className="h-6 w-6 fill-primary stroke-white mx-auto" />
-          )}
+          <Link to="/">
+            {isSidebarOpen ? (
+              <div className="flex items-center">
+                <Heart className="h-6 w-6 fill-primary stroke-white mr-2" />
+                <span className="text-xl font-bold text-primary">Hemolyze</span>
+              </div>
+            ) : (
+              <Heart className="h-6 w-6 fill-primary stroke-white mx-auto" />
+            )}
+          </Link>
+
           <button
             onClick={toggleSidebar}
             className="p-2 rounded-full hover:bg-base-300">
@@ -119,7 +122,7 @@ const DashboardLayout = () => {
                   size={20}
                   className={
                     location.pathname === "/dashboard/premium"
-                      ? "text-primary text-amber-500"
+                      ? " text-amber-500"
                       : ""
                   }
                 />
@@ -130,16 +133,18 @@ const DashboardLayout = () => {
             </li>
             <li>
               <Link
-                to="/profile"
+                to="/dashboard/profile"
                 className={`flex items-center p-3 rounded-lg hover:bg-base-300 transition-colors ${
-                  location.pathname === "/profile"
+                  location.pathname === "/dashboard/profile"
                     ? "bg-primary/10 text-primary"
                     : ""
                 }`}>
                 <UserRound
                   size={20}
                   className={
-                    location.pathname === "/profile" ? "text-primary" : ""
+                    location.pathname === "/dashboard/profile"
+                      ? "text-primary"
+                      : ""
                   }
                 />
                 {isSidebarOpen && <span className="ml-3">Profile</span>}

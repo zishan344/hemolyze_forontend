@@ -45,13 +45,6 @@ const Home = () => {
 
   return (
     <>
-      <Hero />
-      <Statistics />
-      <Benefit />
-      <AvailableDonorsPreview />
-      <Testimonials />
-      <CTA />
-
       {/* Donation modal for special events */}
       {activeEvent && (
         <DonationModal
@@ -62,10 +55,16 @@ const Home = () => {
           specialEvent={{
             name: activeEvent.name,
             date: getEventDateRange(activeEvent),
-            icon: activeEvent.icon,
+            icon: activeEvent?.icon,
           }}
         />
       )}
+      <Hero />
+      <Statistics />
+      <Benefit />
+      <AvailableDonorsPreview />
+      <Testimonials />
+      <CTA />
     </>
   );
 };

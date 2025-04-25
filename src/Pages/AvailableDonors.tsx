@@ -1,23 +1,14 @@
 import { Filter, Map, Search, Syringe } from "lucide-react";
 import { useEffect, useState } from "react";
 import authApiClient from "../Service/authApiClient";
+import { Donor } from "../Component/Donor/DonorType";
+import { bloodGroups } from "../Global/GlobalVar";
 
 // Define donor type based on what we can see in the codebase
-type Donor = {
-  id: number;
-  user: number;
-  name: string;
-  blood_group: string;
-  address: string;
-  phone_number: string;
-  availability_status: boolean;
-  age?: number;
-  last_donation_date?: string;
-};
 
 const AvailableDonors = () => {
   const [donors, setDonors] = useState<Donor[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBloodGroup, setSelectedBloodGroup] = useState<string>("");
@@ -28,7 +19,7 @@ const AvailableDonors = () => {
       try {
         setLoading(true);
         // This endpoint is assumed based on your API structure
-        const response = await authApiClient.get("/available-donors/");
+        const response = await authApiClient.get("/donar-list/");
         setDonors(response.data);
         setFilteredDonors(response.data);
       } catch (error) {
@@ -133,8 +124,6 @@ const AvailableDonors = () => {
 
     setFilteredDonors(filtered);
   }, [searchTerm, selectedBloodGroup, donors]);
-
-  const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
   return (
     <div className="container mx-auto py-10 px-4">
