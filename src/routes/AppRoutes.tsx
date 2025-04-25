@@ -12,6 +12,7 @@ import Profile from "../Pages/Profile";
 import AvailableDonors from "../Pages/AvailableDonors";
 import DonationRequests from "../Component/Dashboard/DonationRequests";
 import DonationHistory from "../Component/Dashboard/DonationHistory";
+import BloodRequests from "../Component/Dashboard/BloodRequests";
 import PremiumMembership from "../Component/Dashboard/PremiumMembership";
 import Donation from "../Pages/Donation";
 import DashboardLayout from "../Layout/DashboardLayout";
@@ -52,6 +53,7 @@ const AppRoutes = () => {
         }>
         <Route index element={<Dashboard />} />
         <Route path="requests" element={<DonationRequests />} />
+        <Route path="blood-requests" element={<BloodRequests />} />
         <Route path="history" element={<DonationHistory />} />
         <Route path="premium" element={<PremiumMembership />} />
         <Route path="profile" element={<Profile />} />

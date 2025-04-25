@@ -8,6 +8,7 @@ import {
   Menu,
   UserRound,
   X,
+  AlertCircle,
 } from "lucide-react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import useAuthContext from "../Hooks/useAuthContext";
@@ -87,6 +88,25 @@ const DashboardLayout = () => {
                 {isSidebarOpen && (
                   <span className="ml-3">Donation Requests</span>
                 )}
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/dashboard/blood-requests"
+                className={`flex items-center p-3 rounded-lg hover:bg-base-300 transition-colors ${
+                  location.pathname === "/dashboard/blood-requests"
+                    ? "bg-primary/10 text-primary"
+                    : ""
+                }`}>
+                <AlertCircle
+                  size={20}
+                  className={
+                    location.pathname === "/dashboard/blood-requests"
+                      ? "text-primary"
+                      : ""
+                  }
+                />
+                {isSidebarOpen && <span className="ml-3">Blood Requests</span>}
               </Link>
             </li>
             <li>

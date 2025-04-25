@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
-import { Calendar, Clock, DropletIcon, Info, MapPin, User } from "lucide-react";
+import { Calendar, DropletIcon, Info, MapPin, User } from "lucide-react";
+import FilterTab from "./DonationHistory/FilterTab";
+import StatisticsCards from "./DonationHistory/StatisticsCards";
 
-type DonationStatus = "pending" | "completed" | "cancelled";
+export type DonationStatus = "pending" | "completed" | "cancelled";
+export type ViewType = "donated" | "received";
 
-interface DonationRecord {
+export interface DonationRecord {
   id: number;
   recipient_name: string;
   blood_group: string;
@@ -16,29 +19,43 @@ interface DonationRecord {
   certificate_url?: string;
 }
 
+export interface ReceivedRecord {
+  id: number;
+  donor_name: string;
+  blood_group: string;
+  hospital_name: string;
+  hospital_address: string;
+  received_date: string;
+  status: DonationStatus;
+  units_received: number;
+  notes?: string;
+}
+
 const DonationHistory = () => {
   // const { user } = useAuthContext();
   const [donationHistory, setDonationHistory] = useState<DonationRecord[]>([]);
+  const [receivedHistory, setReceivedHistory] = useState<ReceivedRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<"all" | DonationStatus>(
     "all"
   );
+  const [viewType, setViewType] = useState<ViewType>("donated");
 
   useEffect(() => {
-    fetchDonationHistory();
+    fetchData();
   }, []);
 
-  const fetchDonationHistory = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
-      // In a real app, this would be an API call:
-      // const response = await authApiClient.get("/donation-history/");
-      // setDonationHistory(response.data);
+      // In a real app, these would be API calls:
+      // const donationResponse = await authApiClient.get("/donation-history/");
+      // const receivedResponse = await authApiClient.get("/received-history/");
 
       // For demo purposes, we'll use sample data
       setTimeout(() => {
-        const sampleHistory: DonationRecord[] = [
+        const sampleDonationHistory: DonationRecord[] = [
           {
             id: 1,
             recipient_name: "Sarah Johnson",
@@ -84,12 +101,37 @@ const DonationHistory = () => {
           },
         ];
 
-        setDonationHistory(sampleHistory);
+        const sampleReceivedHistory: ReceivedRecord[] = [
+          {
+            id: 1,
+            donor_name: "James Brown",
+            blood_group: "A+",
+            hospital_name: "City General Hospital",
+            hospital_address: "123 Medical Center Blvd",
+            received_date: "2025-03-21T10:30:00",
+            status: "completed",
+            units_received: 2,
+            notes: "Emergency surgery requirement",
+          },
+          {
+            id: 2,
+            donor_name: "Olivia Martinez",
+            blood_group: "O+",
+            hospital_name: "Memorial Hospital",
+            hospital_address: "456 Healthcare Ave",
+            received_date: "2025-04-05T14:00:00",
+            status: "completed",
+            units_received: 1,
+          },
+        ];
+
+        setDonationHistory(sampleDonationHistory);
+        setReceivedHistory(sampleReceivedHistory);
         setLoading(false);
       }, 1000);
     } catch (error) {
-      console.error("Error fetching donation history:", error);
-      setError("Failed to load donation history. Please try again.");
+      console.error("Error fetching data:", error);
+      setError("Failed to load history data. Please try again.");
       setLoading(false);
     }
   };
@@ -124,24 +166,6 @@ const DonationHistory = () => {
     } ago`;
   };
 
-  const filteredHistory =
-    activeFilter === "all"
-      ? donationHistory
-      : donationHistory.filter((donation) => donation.status === activeFilter);
-
-  /*  const getStatusColor = (status: DonationStatus) => {
-    switch (status) {
-      case "completed":
-        return "text-success";
-      case "pending":
-        return "text-warning";
-      case "cancelled":
-        return "text-error";
-      default:
-        return "";
-    }
-  };
- */
   const getBadgeClass = (status: DonationStatus) => {
     switch (status) {
       case "completed":
@@ -160,91 +184,90 @@ const DonationHistory = () => {
     window.open(certificateUrl, "_blank");
   };
 
+  // Get filtered data based on active filter and view type
+  const getFilteredData = () => {
+    switch (viewType) {
+      case "donated":
+        return activeFilter === "all"
+          ? donationHistory
+          : donationHistory.filter((item) => item.status === activeFilter);
+      case "received":
+        return activeFilter === "all"
+          ? receivedHistory
+          : receivedHistory.filter((item) => item.status === activeFilter);
+      default:
+        return [];
+    }
+  };
+
+  const filteredData = getFilteredData();
+
+  // Get title based on view type
+  const getTitle = () => {
+    switch (viewType) {
+      case "donated":
+        return "Your Donation History";
+      case "received":
+        return "Blood You've Received";
+      default:
+        return "Blood Donation Records";
+    }
+  };
+
+  // Get description based on view type
+  const getDescription = () => {
+    switch (viewType) {
+      case "donated":
+        return "Review all your blood donation activities including completed, pending, and cancelled donations.";
+      case "received":
+        return "Track blood donations you've received for medical treatments.";
+      default:
+        return "";
+    }
+  };
+
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-base-content mb-2">
-          Your Donation History
+          {getTitle()}
         </h1>
-        <p className="text-base-content/70">
-          Review all your blood donation activities including completed,
-          pending, and cancelled donations.
-        </p>
+        <p className="text-base-content/70">{getDescription()}</p>
+      </div>
+
+      {/* View Type Selector */}
+      <div className="mb-6">
+        <div className="tabs tabs-bordered">
+          <button
+            className={`tab ${viewType === "donated" ? "tab-active" : ""}`}
+            onClick={() => setViewType("donated")}>
+            Donated Blood
+          </button>
+          <button
+            className={`tab ${viewType === "received" ? "tab-active" : ""}`}
+            onClick={() => setViewType("received")}>
+            Received Blood
+          </button>
+        </div>
       </div>
 
       {/* Filter tabs */}
-      <div className="mb-6">
-        <div className="tabs tabs-boxed bg-base-200 inline-flex">
-          <button
-            className={`tab ${activeFilter === "all" ? "tab-active" : ""}`}
-            onClick={() => setActiveFilter("all")}>
-            All
-          </button>
-          <button
-            className={`tab ${
-              activeFilter === "completed" ? "tab-active" : ""
-            }`}
-            onClick={() => setActiveFilter("completed")}>
-            Completed
-          </button>
-          <button
-            className={`tab ${activeFilter === "pending" ? "tab-active" : ""}`}
-            onClick={() => setActiveFilter("pending")}>
-            Pending
-          </button>
-          <button
-            className={`tab ${
-              activeFilter === "cancelled" ? "tab-active" : ""
-            }`}
-            onClick={() => setActiveFilter("cancelled")}>
-            Cancelled
-          </button>
-        </div>
-      </div>
+      <FilterTab
+        activeFilter={activeFilter}
+        setActiveFilter={setActiveFilter}
+        viewType={viewType}
+      />
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="stat bg-base-100 shadow rounded-lg">
-          <div className="stat-figure text-success">
-            <DropletIcon size={28} className="stroke-success" />
-          </div>
-          <div className="stat-title">Completed Donations</div>
-          <div className="stat-value text-success">
-            {donationHistory.filter((d) => d.status === "completed").length}
-          </div>
-          <div className="stat-desc">Lives you've helped</div>
-        </div>
+      {!loading && !error && (
+        <StatisticsCards
+          donationHistory={donationHistory}
+          receivedHistory={receivedHistory}
+          viewType={viewType}
+        />
+      )}
 
-        <div className="stat bg-base-100 shadow rounded-lg">
-          <div className="stat-figure text-warning">
-            <Clock size={28} className="stroke-warning" />
-          </div>
-          <div className="stat-title">Pending Donations</div>
-          <div className="stat-value text-warning">
-            {donationHistory.filter((d) => d.status === "pending").length}
-          </div>
-          <div className="stat-desc">Scheduled donations</div>
-        </div>
-
-        <div className="stat bg-base-100 shadow rounded-lg">
-          <div className="stat-figure text-primary">
-            <DropletIcon size={28} className="stroke-primary fill-primary/20" />
-          </div>
-          <div className="stat-title">Total Blood Units</div>
-          <div className="stat-value text-primary">
-            {donationHistory.reduce(
-              (total, donation) =>
-                donation.status === "completed"
-                  ? total + donation.units_donated
-                  : total,
-              0
-            )}
-          </div>
-          <div className="stat-desc">Units you've donated</div>
-        </div>
-      </div>
-
-      {/* Donation History List */}
+      {/* Content based on view type */}
       {loading ? (
         <div className="flex justify-center items-center py-20">
           <div className="loading loading-spinner loading-lg text-primary"></div>
@@ -253,167 +276,325 @@ const DonationHistory = () => {
         <div className="alert alert-error">
           <span>{error}</span>
         </div>
-      ) : filteredHistory.length === 0 ? (
+      ) : filteredData.length === 0 ? (
         <div className="text-center py-12 bg-base-200 rounded-lg">
           <div className="text-6xl mb-4">📋</div>
-          <h3 className="text-xl font-bold mb-2">No donations found</h3>
+          <h3 className="text-xl font-bold mb-2">No records found</h3>
           <p className="text-base-content/70">
             {activeFilter === "all"
-              ? "You haven't made any donations yet."
-              : `You don't have any ${activeFilter} donations.`}
+              ? `You don't have any ${
+                  viewType === "donated" ? "donation" : "received blood"
+                } records yet.`
+              : `You don't have any ${activeFilter} ${
+                  viewType === "donated" ? "donations" : "received blood"
+                }.`}
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6">
-          {filteredHistory.map((donation) => (
-            <div
-              key={donation.id}
-              className="card bg-base-100 shadow-md overflow-hidden">
-              <div className="card-body p-0">
-                <div className="flex flex-col lg:flex-row">
-                  {/* Left side - Details */}
-                  <div className="p-6 flex-grow">
-                    <div className="flex justify-between items-center mb-4">
-                      <h2 className="card-title">{donation.hospital_name}</h2>
-                      <div
-                        className={`badge ${getBadgeClass(donation.status)}`}>
-                        {donation.status}
-                      </div>
-                    </div>
+          {/* Donated Blood View */}
+          {viewType === "donated" &&
+            donationHistory
+              .filter(
+                (donation) =>
+                  activeFilter === "all" || donation.status === activeFilter
+              )
+              .map((donation) => (
+                <div
+                  key={donation.id}
+                  className="card bg-base-100 shadow-md overflow-hidden">
+                  <div className="card-body p-0">
+                    <div className="flex flex-col lg:flex-row">
+                      {/* Left side - Details */}
+                      <div className="p-6 flex-grow">
+                        <div className="flex justify-between items-center mb-4">
+                          <h2 className="card-title">
+                            {donation.hospital_name}
+                          </h2>
+                          <div
+                            className={`badge ${getBadgeClass(
+                              donation.status
+                            )}`}>
+                            {donation.status}
+                          </div>
+                        </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <div className="flex items-start text-sm mb-3">
-                          <User size={16} className="mr-2 text-gray-400 mt-1" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <div className="text-sm text-base-content/70">
-                              Recipient
+                            <div className="flex items-start text-sm mb-3">
+                              <User
+                                size={16}
+                                className="mr-2 text-gray-400 mt-1"
+                              />
+                              <div>
+                                <div className="text-sm text-base-content/70">
+                                  Recipient
+                                </div>
+                                <div className="font-medium">
+                                  {donation.recipient_name}
+                                </div>
+                              </div>
                             </div>
-                            <div className="font-medium">
-                              {donation.recipient_name}
+
+                            <div className="flex items-start text-sm mb-3">
+                              <MapPin
+                                size={16}
+                                className="mr-2 text-gray-400 mt-1"
+                              />
+                              <div>
+                                <div className="text-sm text-base-content/70">
+                                  Location
+                                </div>
+                                <div className="font-medium">
+                                  {donation.hospital_address}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="flex items-start text-sm mb-3">
+                              <Calendar
+                                size={16}
+                                className="mr-2 text-gray-400 mt-1"
+                              />
+                              <div>
+                                <div className="text-sm text-base-content/70">
+                                  Date
+                                </div>
+                                <div className="font-medium">
+                                  {formatDate(donation.donation_date)}
+                                </div>
+                                <div className="text-xs text-base-content/60">
+                                  {getRelativeTime(donation.donation_date)}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-start text-sm">
+                              <DropletIcon
+                                size={16}
+                                className="mr-2 text-gray-400 mt-1"
+                              />
+                              <div>
+                                <div className="text-sm text-base-content/70">
+                                  Blood Type & Units
+                                </div>
+                                <div className="font-medium">
+                                  {donation.blood_group} •{" "}
+                                  {donation.units_donated} unit
+                                  {donation.units_donated !== 1 ? "s" : ""}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
 
-                        <div className="flex items-start text-sm mb-3">
-                          <MapPin
-                            size={16}
-                            className="mr-2 text-gray-400 mt-1"
-                          />
-                          <div>
-                            <div className="text-sm text-base-content/70">
-                              Location
-                            </div>
-                            <div className="font-medium">
-                              {donation.hospital_address}
+                        {donation.notes && (
+                          <div className="mt-4 bg-base-200 p-3 rounded-md text-sm flex items-start">
+                            <Info
+                              size={16}
+                              className="mr-2 text-gray-400 mt-1"
+                            />
+                            <div>
+                              <div className="font-medium">Notes</div>
+                              <div className="text-base-content/70">
+                                {donation.notes}
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        )}
                       </div>
 
-                      <div>
-                        <div className="flex items-start text-sm mb-3">
-                          <Calendar
-                            size={16}
-                            className="mr-2 text-gray-400 mt-1"
-                          />
-                          <div>
-                            <div className="text-sm text-base-content/70">
-                              Date
-                            </div>
-                            <div className="font-medium">
-                              {formatDate(donation.donation_date)}
-                            </div>
-                            <div className="text-xs text-base-content/60">
-                              {getRelativeTime(donation.donation_date)}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-start text-sm">
-                          <DropletIcon
-                            size={16}
-                            className="mr-2 text-gray-400 mt-1"
-                          />
-                          <div>
-                            <div className="text-sm text-base-content/70">
-                              Blood Type & Units
-                            </div>
-                            <div className="font-medium">
-                              {donation.blood_group} • {donation.units_donated}{" "}
-                              unit{donation.units_donated !== 1 ? "s" : ""}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {donation.notes && (
-                      <div className="mt-4 bg-base-200 p-3 rounded-md text-sm flex items-start">
-                        <Info size={16} className="mr-2 text-gray-400 mt-1" />
-                        <div>
-                          <div className="font-medium">Notes</div>
-                          <div className="text-base-content/70">
-                            {donation.notes}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Right side - Actions */}
-                  <div className="border-t lg:border-t-0 lg:border-l border-base-200 p-6 lg:w-48 flex flex-col justify-center items-center">
-                    <div className="text-center">
-                      {donation.status === "completed" && (
-                        <>
-                          <div className="badge badge-success mb-3">
-                            Completed
-                          </div>
-                          {donation.certificate_url && (
-                            <button
-                              className="btn btn-outline btn-sm w-full mb-2"
-                              onClick={() =>
-                                downloadCertificate(donation.certificate_url!)
-                              }>
-                              View Certificate
-                            </button>
+                      {/* Right side - Actions */}
+                      <div className="border-t lg:border-t-0 lg:border-l border-base-200 p-6 lg:w-48 flex flex-col justify-center items-center">
+                        <div className="text-center">
+                          {donation.status === "completed" && (
+                            <>
+                              <div className="badge badge-success mb-3">
+                                Completed
+                              </div>
+                              {donation.certificate_url && (
+                                <button
+                                  className="btn btn-outline btn-sm w-full mb-2"
+                                  onClick={() =>
+                                    downloadCertificate(
+                                      donation.certificate_url!
+                                    )
+                                  }>
+                                  View Certificate
+                                </button>
+                              )}
+                              <button className="btn btn-outline btn-sm btn-primary w-full">
+                                Share Achievement
+                              </button>
+                            </>
                           )}
-                          <button className="btn btn-outline btn-sm btn-primary w-full">
-                            Share Achievement
-                          </button>
-                        </>
-                      )}
 
-                      {donation.status === "pending" && (
-                        <>
-                          <div className="badge badge-warning mb-3">
-                            Pending
-                          </div>
-                          <p className="text-sm text-base-content/70 mb-2">
-                            Scheduled donation
-                          </p>
-                          <button className="btn btn-outline btn-sm btn-error w-full">
-                            Cancel Donation
-                          </button>
-                        </>
-                      )}
+                          {donation.status === "pending" && (
+                            <>
+                              <div className="badge badge-warning mb-3">
+                                Pending
+                              </div>
+                              <p className="text-sm text-base-content/70 mb-2">
+                                Scheduled donation
+                              </p>
+                              <button className="btn btn-outline btn-sm btn-error w-full">
+                                Cancel Donation
+                              </button>
+                            </>
+                          )}
 
-                      {donation.status === "cancelled" && (
-                        <>
-                          <div className="badge badge-error mb-3">
-                            Cancelled
-                          </div>
-                          <p className="text-sm text-base-content/70">
-                            This donation was cancelled
-                          </p>
-                        </>
-                      )}
+                          {donation.status === "cancelled" && (
+                            <>
+                              <div className="badge badge-error mb-3">
+                                Cancelled
+                              </div>
+                              <p className="text-sm text-base-content/70">
+                                This donation was cancelled
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              ))}
+
+          {/* Received Blood View */}
+          {viewType === "received" &&
+            receivedHistory
+              .filter(
+                (received) =>
+                  activeFilter === "all" || received.status === activeFilter
+              )
+              .map((received) => (
+                <div
+                  key={received.id}
+                  className="card bg-base-100 shadow-md overflow-hidden">
+                  <div className="card-body p-0">
+                    <div className="flex flex-col lg:flex-row">
+                      {/* Left side - Details */}
+                      <div className="p-6 flex-grow">
+                        <div className="flex justify-between items-center mb-4">
+                          <h2 className="card-title">
+                            {received.hospital_name}
+                          </h2>
+                          <div
+                            className={`badge ${getBadgeClass(
+                              received.status
+                            )}`}>
+                            {received.status}
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <div className="flex items-start text-sm mb-3">
+                              <User
+                                size={16}
+                                className="mr-2 text-gray-400 mt-1"
+                              />
+                              <div>
+                                <div className="text-sm text-base-content/70">
+                                  Donor
+                                </div>
+                                <div className="font-medium">
+                                  {received.donor_name}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-start text-sm mb-3">
+                              <MapPin
+                                size={16}
+                                className="mr-2 text-gray-400 mt-1"
+                              />
+                              <div>
+                                <div className="text-sm text-base-content/70">
+                                  Location
+                                </div>
+                                <div className="font-medium">
+                                  {received.hospital_address}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="flex items-start text-sm mb-3">
+                              <Calendar
+                                size={16}
+                                className="mr-2 text-gray-400 mt-1"
+                              />
+                              <div>
+                                <div className="text-sm text-base-content/70">
+                                  Received Date
+                                </div>
+                                <div className="font-medium">
+                                  {formatDate(received.received_date)}
+                                </div>
+                                <div className="text-xs text-base-content/60">
+                                  {getRelativeTime(received.received_date)}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-start text-sm">
+                              <DropletIcon
+                                size={16}
+                                className="mr-2 text-gray-400 mt-1"
+                              />
+                              <div>
+                                <div className="text-sm text-base-content/70">
+                                  Blood Type & Units
+                                </div>
+                                <div className="font-medium">
+                                  {received.blood_group} •{" "}
+                                  {received.units_received} unit
+                                  {received.units_received !== 1 ? "s" : ""}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {received.notes && (
+                          <div className="mt-4 bg-base-200 p-3 rounded-md text-sm flex items-start">
+                            <Info
+                              size={16}
+                              className="mr-2 text-gray-400 mt-1"
+                            />
+                            <div>
+                              <div className="font-medium">Notes</div>
+                              <div className="text-base-content/70">
+                                {received.notes}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Right side - Actions */}
+                      <div className="border-t lg:border-t-0 lg:border-l border-base-200 p-6 lg:w-48 flex flex-col justify-center items-center">
+                        <div className="text-center">
+                          {received.status === "completed" && (
+                            <>
+                              <div className="badge badge-success mb-3">
+                                Received
+                              </div>
+                              <button className="btn btn-outline btn-sm btn-primary w-full">
+                                Send Thank You
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
         </div>
       )}
     </div>

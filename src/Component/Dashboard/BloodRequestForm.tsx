@@ -1,0 +1,322 @@
+import { useState } from "react";
+import { Calendar, DropletIcon, Info, MapPin, User, Phone } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { bloodGroups } from "../../Global/GlobalVar";
+import ErrorAlert from "../ErrorAlert";
+import SuccessAlert from "../SuccessAlert";
+import useAuthContext from "../../Hooks/useAuthContext";
+import { BloodRequestFormValues } from "./BloodRequest/BloodRequestType";
+
+const BloodRequestForm = () => {
+  const { user } = useAuthContext();
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<BloodRequestFormValues>({
+    defaultValues: {
+      requester_name: user?.username || "",
+      units_needed: 1,
+    },
+  });
+
+  const onSubmit = async (data: BloodRequestFormValues) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // For demo purposes, we'll just simulate the API call
+      console.log("Submitting blood request:", data);
+
+      // In a real app, you would make an API call:
+      // const response = await authApiClient.post("/blood-requests/", data);
+
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setSuccess(
+        "Blood request submitted successfully! Donors will be notified."
+      );
+      reset(); // Reset form after successful submission
+
+      // Optionally redirect or update UI
+      // Use setTimeout to clear the success message after 5 seconds
+      setTimeout(() => {
+        setSuccess(null);
+      }, 5000);
+    } catch (err: any) {
+      console.error("Error submitting blood request:", err);
+      setError(
+        err.message || "Failed to submit blood request. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Calculate min date (today) and max date (3 months from now)
+  const today = new Date();
+  const minDate = today.toISOString().split("T")[0];
+
+  const maxDate = new Date();
+  maxDate.setMonth(today.getMonth() + 3);
+  const maxDateString = maxDate.toISOString().split("T")[0];
+
+  return (
+    <div className="bg-base-100 shadow-md rounded-lg p-6">
+      <h2 className="text-2xl font-bold mb-6">Request Blood Donation</h2>
+
+      {error && <ErrorAlert message={error} />}
+      {success && <SuccessAlert message={success} />}
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Requester Name */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Requester Name
+            </label>
+            <div className="relative">
+              <User
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <input
+                type="text"
+                className={`input input-bordered w-full pl-10 ${
+                  errors.requester_name ? "input-error" : ""
+                }`}
+                placeholder="Full Name"
+                {...register("requester_name", {
+                  required: "Requester name is required",
+                })}
+              />
+            </div>
+            {errors.requester_name && (
+              <p className="mt-1 text-sm text-error">
+                {errors.requester_name.message}
+              </p>
+            )}
+          </div>
+
+          {/* Blood Group */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Blood Group Needed
+            </label>
+            <div className="relative">
+              <DropletIcon
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <select
+                className={`select select-bordered w-full pl-10 ${
+                  errors.blood_group ? "select-error" : ""
+                }`}
+                {...register("blood_group", {
+                  required: "Blood group is required",
+                })}>
+                <option value="">Select Blood Group</option>
+                {bloodGroups.map((group) => (
+                  <option key={group} value={group}>
+                    {group}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {errors.blood_group && (
+              <p className="mt-1 text-sm text-error">
+                {errors.blood_group.message}
+              </p>
+            )}
+          </div>
+
+          {/* Hospital Name */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Hospital Name
+            </label>
+            <input
+              type="text"
+              className={`input input-bordered w-full ${
+                errors.hospital_name ? "input-error" : ""
+              }`}
+              placeholder="Name of the hospital"
+              {...register("hospital_name", {
+                required: "Hospital name is required",
+              })}
+            />
+            {errors.hospital_name && (
+              <p className="mt-1 text-sm text-error">
+                {errors.hospital_name.message}
+              </p>
+            )}
+          </div>
+
+          {/* Hospital Address */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Hospital Address
+            </label>
+            <div className="relative">
+              <MapPin
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <input
+                type="text"
+                className={`input input-bordered w-full pl-10 ${
+                  errors.hospital_address ? "input-error" : ""
+                }`}
+                placeholder="Hospital address"
+                {...register("hospital_address", {
+                  required: "Hospital address is required",
+                })}
+              />
+            </div>
+            {errors.hospital_address && (
+              <p className="mt-1 text-sm text-error">
+                {errors.hospital_address.message}
+              </p>
+            )}
+          </div>
+
+          {/* Needed By Date */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Needed By Date
+            </label>
+            <div className="relative">
+              <Calendar
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <input
+                type="date"
+                className={`input input-bordered w-full pl-10 ${
+                  errors.needed_by_date ? "input-error" : ""
+                }`}
+                min={minDate}
+                max={maxDateString}
+                {...register("needed_by_date", {
+                  required: "Date is required",
+                })}
+              />
+            </div>
+            {errors.needed_by_date && (
+              <p className="mt-1 text-sm text-error">
+                {errors.needed_by_date.message}
+              </p>
+            )}
+          </div>
+
+          {/* Units Needed */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Units Needed
+            </label>
+            <div className="relative">
+              <DropletIcon
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <input
+                type="number"
+                className={`input input-bordered w-full pl-10 ${
+                  errors.units_needed ? "input-error" : ""
+                }`}
+                min="1"
+                max="10"
+                {...register("units_needed", {
+                  required: "Number of units is required",
+                  min: {
+                    value: 1,
+                    message: "Must request at least 1 unit",
+                  },
+                  max: {
+                    value: 10,
+                    message: "Maximum 10 units per request",
+                  },
+                })}
+              />
+            </div>
+            {errors.units_needed && (
+              <p className="mt-1 text-sm text-error">
+                {errors.units_needed.message}
+              </p>
+            )}
+          </div>
+
+          {/* Contact Number */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Contact Number
+            </label>
+            <div className="relative">
+              <Phone
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <input
+                type="tel"
+                className={`input input-bordered w-full pl-10 ${
+                  errors.contact_number ? "input-error" : ""
+                }`}
+                placeholder="Your contact number"
+                {...register("contact_number", {
+                  required: "Contact number is required",
+                  pattern: {
+                    value: /^[0-9+\-\s()]*$/,
+                    message: "Please enter a valid phone number",
+                  },
+                })}
+              />
+            </div>
+            {errors.contact_number && (
+              <p className="mt-1 text-sm text-error">
+                {errors.contact_number.message}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Notes */}
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Additional Notes (Optional)
+          </label>
+          <div className="relative">
+            <Info className="absolute left-3 top-3 text-gray-400" size={20} />
+            <textarea
+              className="textarea textarea-bordered w-full pl-10 h-24"
+              placeholder="Important details about the request e.g., reason for blood need, urgency, etc."
+              {...register("notes")}></textarea>
+          </div>
+        </div>
+
+        <div className="flex justify-center mt-6">
+          <button
+            type="submit"
+            className="btn btn-primary btn-lg w-full md:w-auto md:min-w-[200px]"
+            disabled={loading}>
+            {loading ? (
+              <>
+                <span className="loading loading-spinner loading-sm"></span>
+                Processing...
+              </>
+            ) : (
+              "Submit Blood Request"
+            )}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default BloodRequestForm;

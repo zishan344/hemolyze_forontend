@@ -7,22 +7,23 @@ import {
   Phone,
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import apiClient from "../../Service/apiClient";
 
 // Define request types
 type RequestStatus = "pending" | "accepted" | "completed" | "cancelled";
 
 interface RecipientRequest {
   id: number;
-  recipient_name: string;
+  name: string;
   blood_group: string;
   hospital_name: string;
   hospital_address: string;
-  contact_number: string;
+  phone: string;
   required_units: number;
   urgency_level: "normal" | "urgent" | "critical";
-  request_date: string;
-  status: RequestStatus;
-  additional_info?: string;
+  date: string;
+  status?: RequestStatus;
+  description?: string;
 }
 
 const DonationRequests = () => {
@@ -41,11 +42,12 @@ const DonationRequests = () => {
     try {
       setLoading(true);
       // This would normally call your API endpoint
-      // const response = await authApiClient.get("/donation-requests/");
-      // setRequests(response.data);
+      const response = await apiClient.get("/blood-request");
+      setRequests(response.data);
+      setLoading(false);
 
       // For demo purposes, using static data
-      setTimeout(() => {
+      /* setTimeout(() => {
         const sampleRequests: RecipientRequest[] = [
           {
             id: 1,
@@ -101,7 +103,7 @@ const DonationRequests = () => {
         ];
         setRequests(sampleRequests);
         setLoading(false);
-      }, 1000);
+      }, 1000); */
     } catch (error) {
       console.error("Error fetching donation requests:", error);
       setError("Failed to load donation requests. Please try again.");
@@ -262,7 +264,7 @@ const DonationRequests = () => {
                   <div className="flex-grow p-6 border-b lg:border-b-0 lg:border-r border-base-200">
                     <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                       <h2 className="card-title text-lg">
-                        {request.recipient_name}
+                        {request.name}
                         <span
                           className={getUrgencyBadgeClass(
                             request.urgency_level
@@ -298,14 +300,14 @@ const DonationRequests = () => {
 
                         <div className="flex items-center text-sm mb-3">
                           <Phone size={16} className="mr-2 text-gray-400" />
-                          <span>{request.contact_number}</span>
+                          <span>{request.phone}</span>
                         </div>
                       </div>
 
                       <div>
                         <div className="flex items-center text-sm mb-3">
                           <Calendar size={16} className="mr-2 text-gray-400" />
-                          <span>{formatDate(request.request_date)}</span>
+                          <span>{formatDate(request.date)}</span>
                         </div>
 
                         <div className="flex items-center text-sm mb-3">
@@ -318,7 +320,7 @@ const DonationRequests = () => {
                                 ? "text-warning"
                                 : ""
                             }>
-                            {getDaysUntil(request.request_date)}
+                            {getDaysUntil(request.date)}
                           </span>
                         </div>
 
@@ -332,11 +334,11 @@ const DonationRequests = () => {
                       </div>
                     </div>
 
-                    {request.additional_info && (
+                    {request.description && (
                       <div className="mt-4 bg-base-200 rounded-md p-3 text-sm">
                         <p className="font-medium">Additional Information:</p>
                         <p className="text-base-content/70">
-                          {request.additional_info}
+                          {request.description}
                         </p>
                       </div>
                     )}
@@ -356,11 +358,11 @@ const DonationRequests = () => {
                             ? "badge-error"
                             : "badge-warning"
                         }`}>
-                        {request.status.toUpperCase()}
+                        {request?.status?.toUpperCase()}
                       </div>
                     </div>
 
-                    {request.status === "pending" ? (
+                    {request?.status === "pending" ? (
                       <button
                         className="btn btn-primary w-full"
                         onClick={() => handleAcceptRequest(request.id)}
@@ -374,7 +376,7 @@ const DonationRequests = () => {
                           "Accept Request"
                         )}
                       </button>
-                    ) : request.status === "accepted" ? (
+                    ) : request?.status === "accepted" ? (
                       <div className="space-y-2">
                         <div className="text-xs text-center text-success">
                           You've accepted this request
