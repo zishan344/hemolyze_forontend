@@ -3,19 +3,27 @@ import { Link } from "react-router";
 import { useForm } from "react-hook-form";
 import { userRegisterType } from "../globalType/AuthType";
 import useAuthContext from "../Hooks/useAuthContext";
+import { useState } from "react";
+import SuccessAlert from "../Component/SuccessAlert";
+
 export default function RegisterPage() {
   const { errorMsg, loading, registerUser } = useAuthContext();
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const {
     handleSubmit,
     register,
     watch,
+    reset,
     formState: { errors },
   } = useForm<userRegisterType>();
 
   const onSubmit = async (data: userRegisterType): Promise<void> => {
     delete data.confirm_password;
     const response = await registerUser(data);
-    console.log(response);
+    if (response?.success) {
+      setSuccessMsg(response.message);
+      reset(); // Reset the form on successful registration
+    }
   };
 
   return (
@@ -38,6 +46,8 @@ export default function RegisterPage() {
               <span>{String(errorMsg)}</span>
             </div>
           ) : null}
+
+          {successMsg && <SuccessAlert message={successMsg} />}
 
           <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

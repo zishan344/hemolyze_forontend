@@ -1,13 +1,13 @@
 import { ChevronRight } from "lucide-react";
 
 import Image from "../Image";
-
+import cover from "../../assets/cover .png";
 const Hero = () => {
   return (
     <section className="hero min-h-[70vh] bg-base-200 relative">
       <div className="absolute inset-0 overflow-hidden">
         <Image
-          src="/placeholder.svg?height=800&width=1600"
+          src={cover}
           alt="Blood donation"
           fill
           className="object-cover opacity-20"
