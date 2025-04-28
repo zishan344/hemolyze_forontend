@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { userLoginType } from "../globalType/AuthType";
 import useAuthContext from "../Hooks/useAuthContext";
-import { Link } from "react-router";
+import { Link, Navigate, useNavigate } from "react-router";
 import {
   ArrowRight,
   Facebook,
@@ -13,6 +13,7 @@ import {
 
 const Login = () => {
   const { loginUser, loading, errorMsg } = useAuthContext();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -20,8 +21,9 @@ const Login = () => {
   } = useForm<userLoginType>();
   const onSubmit = async (data: userLoginType): Promise<void> => {
     const response = await loginUser(data);
-    if (response) {
-      console.log(response);
+    console.log(response);
+    if (response.success) {
+      navigate("/dashboard", { replace: true });
     }
   };
 

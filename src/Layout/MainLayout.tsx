@@ -3,6 +3,8 @@ import { Outlet } from "react-router";
 import Footer from "./Footer";
 
 const MainLayout = () => {
+  // const { loading } = useAuthContext();
+  // if (loading) return <Loadings />;
   return (
     <div>
       <Navbar />

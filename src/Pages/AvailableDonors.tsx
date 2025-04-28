@@ -4,6 +4,7 @@ import { bloodGroups } from "../Global/GlobalVar";
 import useBloodDataContext from "../Hooks/useBloodDataContext";
 import SearchFilter from "../Component/Dashboard/AvailableDonors/SearchFilter";
 import CtaSection from "../Component/Dashboard/AvailableDonors/CtaSection";
+import Loadings from "../Shared/Loadings";
 
 const AvailableDonors = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -63,9 +64,7 @@ const AvailableDonors = () => {
 
       {/* Donors List */}
       {loading ? (
-        <div className="flex justify-center items-center py-20">
-          <div className="loading loading-spinner loading-lg text-primary"></div>
-        </div>
+        <Loadings />
       ) : error ? (
         <div className="alert alert-error">{error}</div>
       ) : filteredDonors.length > 0 ? (
