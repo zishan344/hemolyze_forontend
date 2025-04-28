@@ -49,7 +49,7 @@ const Navbar = () => {
                 </Link>
               </li>
 
-              {currentLocation.pathname !== "/dashboard" && (
+              {currentLocation.pathname == "/" && (
                 <>
                   <li>
                     <a href="#benefits">Benefits</a>
@@ -89,7 +89,7 @@ const Navbar = () => {
               </Link>
             </li>
 
-            {currentLocation.pathname !== "/dashboard" && (
+            {currentLocation.pathname == "/" && (
               <>
                 <li>
                   <a href="#benefits">Benefits</a>

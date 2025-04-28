@@ -92,7 +92,7 @@ const useAuth = () => {
     setLoading(true);
     try {
       if (id) {
-        await authApiClient.put(`/user-details/${id}`, data);
+        await authApiClient.put(`/user-details/${id}/`, data);
         await fetchUserDetails();
         return { success: true, message: "Profile updated successfully" };
       } else {

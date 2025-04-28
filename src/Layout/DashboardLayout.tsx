@@ -9,9 +9,11 @@ import {
   UserRound,
   X,
   AlertCircle,
+  DollarSign,
 } from "lucide-react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import useAuthContext from "../Hooks/useAuthContext";
+import DarkMode from "../Component/DarkMode";
 
 const DashboardLayout = () => {
   const { user } = useAuthContext();
@@ -132,6 +134,27 @@ const DashboardLayout = () => {
             </li>
             <li>
               <Link
+                to="/dashboard/fund-history"
+                className={`flex items-center p-3 rounded-lg hover:bg-base-300 transition-colors ${
+                  location.pathname === "/dashboard/fund-history"
+                    ? "bg-primary/10 text-primary"
+                    : ""
+                }`}>
+                <DollarSign
+                  size={20}
+                  className={
+                    location.pathname === "/dashboard/fund-history"
+                      ? "text-primary"
+                      : ""
+                  }
+                />
+                {isSidebarOpen && (
+                  <span className="ml-3">Fund Donation History</span>
+                )}
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/dashboard/premium"
                 className={`flex items-center p-3 rounded-lg hover:bg-base-300 transition-colors ${
                   location.pathname === "/dashboard/premium"
@@ -169,6 +192,9 @@ const DashboardLayout = () => {
                 />
                 {isSidebarOpen && <span className="ml-3">Profile</span>}
               </Link>
+            </li>
+            <li>
+              <DarkMode />
             </li>
           </ul>
         </nav>

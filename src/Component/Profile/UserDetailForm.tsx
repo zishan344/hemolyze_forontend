@@ -10,7 +10,8 @@ import {
 import { useForm } from "react-hook-form";
 import { UserDetailsType } from "../../globalType/AuthType";
 import ErrorAlert from "../ErrorAlert";
-import { UserDetailFormProps } from "./Type/ProfileType";
+import { UserDetailFormProps } from "../../types/Dashboard/profile.type";
+import { bloodGroups } from "../../Global/GlobalVar";
 
 const UserDetailForm = ({
   loading,
@@ -32,7 +33,7 @@ const UserDetailForm = ({
       age: userDetail?.age || undefined,
       blood_group: userDetail?.blood_group || undefined,
       phone_number: userDetail?.phone_number || "",
-      availability_status: userDetail?.availability_status || false,
+      availability_status: userDetail?.availability_status,
     },
   });
   const onDetailsSubmit = async (data: UserDetailsType) => {
@@ -55,7 +56,7 @@ const UserDetailForm = ({
       setIsEditing(false);
     }
   };
-  const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+
   return (
     <form onSubmit={handleDetailsSubmit(onDetailsSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

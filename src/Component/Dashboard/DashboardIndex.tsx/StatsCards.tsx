@@ -25,11 +25,11 @@ const StatsCards = ({
       </div>
 
       <div className="stat bg-base-100 shadow rounded-lg">
-        <div className="stat-figure text-secondary">
-          <CalendarCheck size={28} className="stroke-secondary" />
+        <div className="stat-figure text-warning">
+          <CalendarCheck size={28} className="stroke-warning" />
         </div>
         <div className="stat-title">Scheduled</div>
-        <div className="stat-value text-secondary">{upcomingDonations}</div>
+        <div className="stat-value text-warning">{upcomingDonations}</div>
         <div className="stat-desc">Upcoming donations</div>
       </div>
 

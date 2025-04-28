@@ -1,10 +1,5 @@
-export type RequestStatus = "pending" | "accepted" | "completed" | "cancelled";
-export type DonationStatus = "pending" | "donated" | "canceled";
-export type BloodPostStatus =
-  | "pending"
-  | "accepted"
-  | "completed"
-  | "cancelled";
+import { DonationStatus, RequestStatus } from "../GlobalType";
+
 export interface BloodRequestItem {
   id: number;
   name: string;

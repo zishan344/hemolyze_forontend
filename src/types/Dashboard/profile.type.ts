@@ -2,14 +2,9 @@ import {
   userDataType,
   UserDetailsDataType,
   UserDetailsType,
-} from "../../../globalType/AuthType";
+} from "../../globalType/AuthType";
 
-export type activeTabType =
-  | "history"
-  | "profile"
-  | "basicInfo"
-  | "details"
-  | "security";
+export type activeTabType = "basicInfo" | "details" | "security";
 
 export interface UserDetailFormProps {
   loading: boolean;

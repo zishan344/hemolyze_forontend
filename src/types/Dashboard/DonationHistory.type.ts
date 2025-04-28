@@ -1,8 +1,5 @@
-import {
-  DonationStatus,
-  RequestStatus,
-} from "../../Component/Dashboard/DonationHistory";
-
+import { DonationStatus, RequestStatus } from "../GlobalType";
+export type ViewType = "donated" | "received";
 export interface DonationRecord {
   id: number;
   recipient_name: string;

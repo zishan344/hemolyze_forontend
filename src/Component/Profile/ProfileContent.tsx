@@ -4,8 +4,7 @@ import useAuthContext from "../../Hooks/useAuthContext";
 import ChangePasswordForm from "./ChangePasswordForm";
 import UserDetailForm from "./UserDetailForm";
 import UserDetailsView from "./UserDetailsView";
-import UserHistory from "./UserHistory";
-import { activeTabType } from "./Type/ProfileType";
+import { activeTabType } from "../../types/Dashboard/profile.type";
 
 const ProfileContent = ({ activeTab }: { activeTab: activeTabType }) => {
   const {
@@ -20,8 +19,31 @@ const ProfileContent = ({ activeTab }: { activeTab: activeTabType }) => {
 
   return (
     <div className="bg-base-100 rounded-lg shadow-md p-6">
-      {activeTab === "history" ? (
-        <UserHistory />
+      {activeTab === "details" ? (
+        isEditing ? (
+          <div>
+            <UserDetailForm
+              isEditing={isEditing}
+              user={user}
+              loading={loading}
+              errorMsg={errorMsg ? String(errorMsg) : undefined}
+              userDetail={userDetail}
+              setIsEditing={setIsEditing}
+              updateUserProfileDetails={updateUserProfileDetails}
+            />
+          </div>
+        ) : (
+          <div>
+            <UserDetailsView userDetail={userDetail} />
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => setIsEditing(true)}
+                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90">
+                Edit Details
+              </button>
+            </div>
+          </div>
+        )
       ) : activeTab === "basicInfo" ? (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -78,31 +100,6 @@ const ProfileContent = ({ activeTab }: { activeTab: activeTabType }) => {
             )}
           </div>
         </div>
-      ) : activeTab === "details" ? (
-        isEditing ? (
-          <div>
-            <UserDetailForm
-              isEditing={isEditing}
-              user={user}
-              loading={loading}
-              errorMsg={errorMsg ? String(errorMsg) : undefined}
-              userDetail={userDetail}
-              setIsEditing={setIsEditing}
-              updateUserProfileDetails={updateUserProfileDetails}
-            />
-          </div>
-        ) : (
-          <div>
-            <UserDetailsView userDetail={userDetail} />
-            <div className="flex justify-end mt-4">
-              <button
-                onClick={() => setIsEditing(true)}
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90">
-                Edit Details
-              </button>
-            </div>
-          </div>
-        )
       ) : (
         <ChangePasswordForm user={user} changePassword={changePassword} />
       )}

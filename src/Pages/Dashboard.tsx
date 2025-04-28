@@ -46,9 +46,6 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* Premium Membership Promo */}
-      <PremiumPromo />
-
       {/* Recent Activity & Upcoming Donations */}
       <RecentActivity
         loading={loading}

@@ -1,95 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import FilterTab from "./DonationHistory/FilterTab";
 import StatisticsCards from "./DonationHistory/StatisticsCards";
-import authApiClient from "../../Service/authApiClient";
-import {
-  DonationHistoryApiResponse,
-  DonationRecord,
-  ReceivedRecord,
-} from "../../types/Dashboard/DonationHistory.type";
+
 import BloodDonatedHistory from "./DonationHistory/BloodDonatedHistory";
 import ReceivedBloodHistory from "./DonationHistory/ReceivedBloodHistory";
 import useBloodDataContext from "../../Hooks/useBloodDataContext";
+import useDonationHistory from "../../Hooks/useDonationHistory";
+import { DonationStatus, RequestStatus } from "../../types/GlobalType";
+import { ViewType } from "../../types/Dashboard/DonationHistory.type";
+
 // Updated status values to match the API
-export type DonationStatus = "pending" | "donated" | "canceled";
-export type RequestStatus = "pending" | "accepted" | "completed" | "cancelled";
-export type ViewType = "donated" | "received";
-// Define interfaces according to actual API response
 
 const DonationHistory = () => {
   const {
     handleUpdateAcceptedBloodRequest: handleUpdateAcceptedBloodRequested,
     loading: updateLoading,
   } = useBloodDataContext();
-  const [donationHistory, setDonationHistory] = useState<DonationRecord[]>([]);
-  const [receivedHistory, setReceivedHistory] = useState<ReceivedRecord[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { donationHistory, receivedHistory, loading, error } =
+    useDonationHistory();
   const [activeFilter, setActiveFilter] = useState<
     "all" | DonationStatus | RequestStatus
   >("all");
   const [viewType, setViewType] = useState<ViewType>("donated");
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Make real API call to fetch donation history
-      const response = await authApiClient.get<DonationHistoryApiResponse>(
-        "/donation-history/"
-      );
-
-      // Map API responses to our component's expected format
-      const donationRecords: DonationRecord[] = response.data.donations.map(
-        (donation) => ({
-          id: donation.id,
-          recipient_name: donation.recipient_name,
-          blood_group: donation.blood_request.blood_group,
-          hospital_name: donation.blood_request.hospital_name,
-          hospital_address: "Hospital Address", // Not provided in API response
-          donation_date: donation.date,
-          status: donation.donation_status,
-          units_donated: 1, // Default value since not provided in API
-          notes: "",
-          request_id: donation.blood_request.id,
-        })
-      );
-
-      const receivedRecords: ReceivedRecord[] = response.data.received.map(
-        (received) => ({
-          id: received.id,
-          donor_name: received.donor_name,
-          blood_group: received.blood_request.blood_group,
-          hospital_name: received.blood_request.hospital_name,
-          hospital_address: "Hospital Address", // Not provided in API response
-          received_date: received.date,
-          status: received.donation_status,
-          units_received: 1, // Default value since not provided in API
-          notes: "",
-          blood_request: {
-            id: received.blood_request.id,
-            blood_group: received.blood_request.blood_group,
-            hospital_name: received.blood_request.hospital_name,
-            status: received.blood_request.status,
-            date: received.blood_request.date,
-          },
-        })
-      );
-      setDonationHistory(donationRecords);
-      setReceivedHistory(receivedRecords);
-    } catch (error) {
-      console.error("Error fetching donation history:", error);
-      setError("Failed to load history data. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Handle donataion status
   const handleUpdateAcceptedBloodRequest = async (

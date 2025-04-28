@@ -1,4 +1,4 @@
-import { DonationStatus } from "../Component/Dashboard/DonationHistory";
+import { DonationStatus } from "../types/GlobalType";
 
 export const getBadgeClass = (status: DonationStatus) => {
   switch (status) {

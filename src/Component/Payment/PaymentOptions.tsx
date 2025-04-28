@@ -1,11 +1,9 @@
-import { Wallet, CreditCard, BanknoteIcon, Tag } from "lucide-react";
+import { Tag } from "lucide-react";
 import { useState } from "react";
 
 interface PaymentOptionsProps {
   onAmountSelect: (amount: number) => void;
-  onPaymentTypeSelect: (paymentType: string) => void;
   selectedAmount: number;
-  selectedPaymentType: string;
 }
 
 interface DonationOption {
@@ -14,17 +12,9 @@ interface DonationOption {
   impact: string;
 }
 
-interface PaymentType {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-}
-
 const PaymentOptions = ({
   onAmountSelect,
-  onPaymentTypeSelect,
   selectedAmount,
-  selectedPaymentType,
 }: PaymentOptionsProps) => {
   const [customAmount, setCustomAmount] = useState<string>("");
 
@@ -49,25 +39,6 @@ const PaymentOptions = ({
       amount: 100,
       description: "Premium Supporter",
       impact: "Sponsors a small community blood drive",
-    },
-  ];
-
-  // Payment method options
-  const paymentTypes: PaymentType[] = [
-    {
-      id: "credit_card",
-      name: "Credit Card",
-      icon: <CreditCard className="mr-2" size={18} />,
-    },
-    {
-      id: "bank_transfer",
-      name: "Bank Transfer",
-      icon: <BanknoteIcon className="mr-2" size={18} />,
-    },
-    {
-      id: "digital_wallet",
-      name: "Digital Wallet",
-      icon: <Wallet className="mr-2" size={18} />,
     },
   ];
 
@@ -149,28 +120,6 @@ const PaymentOptions = ({
           </div>
         </div>
       )}
-
-      {/* Payment method selection */}
-      <div className="mb-6">
-        <h3 className="text-lg font-medium mb-3">Payment Method</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {paymentTypes.map((paymentType) => (
-            <button
-              key={paymentType.id}
-              type="button"
-              onClick={() => onPaymentTypeSelect(paymentType.id)}
-              className={`flex items-center justify-center p-3 rounded-lg border transition-all ${
-                selectedPaymentType === paymentType.id
-                  ? "border-primary bg-primary/10"
-                  : "border-base-300 hover:border-primary"
-              }`}>
-              {paymentType.icon}
-              <span>{paymentType.name}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
       <div className="mb-4 p-4 rounded-lg bg-base-200">
         <div className="flex justify-between items-center">
           <span className="text-base-content/80">Selected amount:</span>

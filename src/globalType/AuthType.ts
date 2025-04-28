@@ -15,6 +15,7 @@ export type userDataType = {
   id: number;
   username: string;
   email: string;
+  role: string;
 };
 
 export interface UserDetailsDataType {

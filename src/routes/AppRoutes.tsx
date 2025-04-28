@@ -16,6 +16,8 @@ import BloodRequests from "../Component/Dashboard/BloodRequests";
 import PremiumMembership from "../Component/Dashboard/PremiumMembership";
 import Donation from "../Pages/Donation";
 import DashboardLayout from "../Layout/DashboardLayout";
+import PaymentSuccess from "../Pages/PaymentSuccess";
+import FundDonationHistory from "../Component/Dashboard/FundDonationHistory";
 
 const AppRoutes = () => {
   return (
@@ -55,9 +57,12 @@ const AppRoutes = () => {
         <Route path="requests" element={<DonationRequests />} />
         <Route path="blood-requests" element={<BloodRequests />} />
         <Route path="history" element={<DonationHistory />} />
+        <Route path="fund-history" element={<FundDonationHistory />} />
         <Route path="premium" element={<PremiumMembership />} />
         <Route path="profile" element={<Profile />} />
       </Route>
+
+      <Route path="/payment-success" element={<PaymentSuccess />} />
       <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>
   );

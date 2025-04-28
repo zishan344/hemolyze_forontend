@@ -1,5 +1,5 @@
 import React from "react";
-import { activeTabType } from "./Type/ProfileType";
+import { activeTabType } from "../../types/Dashboard/profile.type";
 
 interface TabNavigationProps {
   activeTab: activeTabType;
@@ -11,12 +11,12 @@ const TabNavigation = ({ activeTab, setActiveTab }: TabNavigationProps) => {
     <div className="flex flex-wrap gap-2 mb-6 sm:space-x-4">
       <button
         className={`px-2 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-lg flex-1 sm:flex-none ${
-          activeTab === "history"
+          activeTab === "details"
             ? "bg-primary text-white"
             : "bg-secondary text-gray-600"
         }`}
-        onClick={() => setActiveTab("history")}>
-        History
+        onClick={() => setActiveTab("details")}>
+        Details
       </button>
       <button
         className={`px-2 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-lg flex-1 sm:flex-none ${
@@ -26,15 +26,6 @@ const TabNavigation = ({ activeTab, setActiveTab }: TabNavigationProps) => {
         }`}
         onClick={() => setActiveTab("basicInfo")}>
         Basic Info
-      </button>
-      <button
-        className={`px-2 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-lg flex-1 sm:flex-none ${
-          activeTab === "details"
-            ? "bg-primary text-white"
-            : "bg-secondary text-gray-600"
-        }`}
-        onClick={() => setActiveTab("details")}>
-        Details
       </button>
       <button
         className={`px-2 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-lg flex-1 sm:flex-none ${

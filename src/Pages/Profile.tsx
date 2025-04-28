@@ -2,10 +2,10 @@ import { useState } from "react";
 import ProfileHeader from "../Component/Profile/ProfileHeader";
 import TabNavigation from "../Component/Profile/TabNavigation";
 import ProfileContent from "../Component/Profile/ProfileContent";
-import { activeTabType } from "../Component/Profile/Type/ProfileType";
+import { activeTabType } from "../types/Dashboard/profile.type";
 
 const Profile = () => {
-  const [activeTab, setActiveTab] = useState<activeTabType>("history");
+  const [activeTab, setActiveTab] = useState<activeTabType>("details");
 
   return (
     <div className="container mx-auto px-4 py-8">

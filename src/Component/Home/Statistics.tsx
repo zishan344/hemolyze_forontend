@@ -13,7 +13,7 @@ const Statistics = () => {
         </p>
       </div>
 
-      <div className="stats shadow w-full">
+      <div className="grid grid-cols-2 md:grid-cols-4 shadow w-full">
         <div className="stat place-items-center">
           <div className="stat-title">Daily Need</div>
           <div className="stat-value text-primary">36,000</div>

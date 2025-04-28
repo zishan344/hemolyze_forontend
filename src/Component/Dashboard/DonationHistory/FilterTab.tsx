@@ -1,6 +1,6 @@
 import React from "react";
-import { DonationStatus, ViewType } from "../DonationHistory";
-import { RequestStatus } from "../../../types/Dashboard/DonationRequests.types";
+import { DonationStatus, RequestStatus } from "../../../types/GlobalType";
+import { ViewType } from "../../../types/Dashboard/DonationHistory.type";
 
 interface activeFilterType {
   activeFilter: string;
