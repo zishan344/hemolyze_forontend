@@ -1,17 +1,31 @@
 import { useState } from "react";
-import { Calendar, DropletIcon, Info, MapPin, User, Phone } from "lucide-react";
+import {
+  Calendar,
+  DropletIcon,
+  Info,
+  MapPin,
+  User,
+  Phone,
+  AlertCircle,
+} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { bloodGroups } from "../../Global/GlobalVar";
 import ErrorAlert from "../ErrorAlert";
 import SuccessAlert from "../SuccessAlert";
 import useAuthContext from "../../Hooks/useAuthContext";
 import { BloodRequestFormValues } from "./BloodRequest/BloodRequestType";
+import authApiClient from "../../Service/authApiClient";
 
-const BloodRequestForm = () => {
+interface BloodRequestFormProps {
+  onRequestSubmitted?: () => void;
+}
+
+const BloodRequestForm = ({ onRequestSubmitted }: BloodRequestFormProps) => {
   const { user } = useAuthContext();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [progressPercentage, setProgressPercentage] = useState<number>(0);
 
   const {
     register,
@@ -22,6 +36,7 @@ const BloodRequestForm = () => {
     defaultValues: {
       requester_name: user?.username || "",
       units_needed: 1,
+      urgency_level: "normal",
     },
   });
 
@@ -30,21 +45,38 @@ const BloodRequestForm = () => {
       setLoading(true);
       setError(null);
 
-      // For demo purposes, we'll just simulate the API call
-      console.log("Submitting blood request:", data);
+      // Prepare request payload to match API expectations based on Django model
+      const requestData = {
+        name: data.requester_name,
+        blood_group: data.blood_group,
+        required_units: data.units_needed,
+        urgency_level: data.urgency_level,
+        phone: data.contact_number,
+        hospital_address: data.hospital_address,
+        hospital_name: data.hospital_name,
+        description: data.notes || "",
+        date: data.needed_by_date,
+      };
 
-      // In a real app, you would make an API call:
-      // const response = await authApiClient.post("/blood-requests/", data);
-
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Make API call using the endpoint defined in your Django ViewSet
+      const response = await authApiClient.post("/blood-request/", requestData);
 
       setSuccess(
         "Blood request submitted successfully! Donors will be notified."
       );
+
+      // If the API returns the progress percentage
+      if (response.data && response.data.progress_percentage !== undefined) {
+        setProgressPercentage(response.data.progress_percentage);
+      }
+
       reset(); // Reset form after successful submission
 
-      // Optionally redirect or update UI
+      // Notify parent component if callback provided
+      if (onRequestSubmitted) {
+        onRequestSubmitted();
+      }
+
       // Use setTimeout to clear the success message after 5 seconds
       setTimeout(() => {
         setSuccess(null);
@@ -52,7 +84,9 @@ const BloodRequestForm = () => {
     } catch (err: any) {
       console.error("Error submitting blood request:", err);
       setError(
-        err.message || "Failed to submit blood request. Please try again."
+        err.response?.data?.message ||
+          err.response?.data?.error ||
+          "Failed to submit blood request. Please try again."
       );
     } finally {
       setLoading(false);
@@ -132,6 +166,35 @@ const BloodRequestForm = () => {
             {errors.blood_group && (
               <p className="mt-1 text-sm text-error">
                 {errors.blood_group.message}
+              </p>
+            )}
+          </div>
+
+          {/* Urgency Level */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Urgency Level
+            </label>
+            <div className="relative">
+              <AlertCircle
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <select
+                className={`select select-bordered w-full pl-10 ${
+                  errors.urgency_level ? "select-error" : ""
+                }`}
+                {...register("urgency_level", {
+                  required: "Urgency level is required",
+                })}>
+                <option value="normal">Normal</option>
+                <option value="urgent">Urgent</option>
+                <option value="critical">Critical</option>
+              </select>
+            </div>
+            {errors.urgency_level && (
+              <p className="mt-1 text-sm text-error">
+                {errors.urgency_level.message}
               </p>
             )}
           </div>
@@ -298,6 +361,21 @@ const BloodRequestForm = () => {
               {...register("notes")}></textarea>
           </div>
         </div>
+
+        {/* Progress Indicator when request is updated */}
+        {progressPercentage > 0 && (
+          <div className="w-full">
+            <div className="flex justify-between text-xs mb-1">
+              <span>Progress</span>
+              <span>{progressPercentage}% Complete</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <div
+                className="bg-primary h-2.5 rounded-full"
+                style={{ width: `${progressPercentage}%` }}></div>
+            </div>
+          </div>
+        )}
 
         <div className="flex justify-center mt-6">
           <button

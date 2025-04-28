@@ -1,10 +1,13 @@
 import React from "react";
-import { DonationStatus } from "../DonationHistory";
+import { DonationStatus, ViewType } from "../DonationHistory";
+import { RequestStatus } from "../../../types/Dashboard/DonationRequests.types";
 
 interface activeFilterType {
   activeFilter: string;
-  setActiveFilter: React.Dispatch<React.SetStateAction<DonationStatus | "all">>;
-  viewType?: "donated" | "received" | "requests";
+  setActiveFilter: React.Dispatch<
+    React.SetStateAction<"all" | DonationStatus | RequestStatus>
+  >;
+  viewType: ViewType | "requests";
 }
 
 const FilterTab = ({
@@ -20,21 +23,98 @@ const FilterTab = ({
           onClick={() => setActiveFilter("all")}>
           All
         </button>
-        <button
-          className={`tab ${activeFilter === "completed" ? "tab-active" : ""}`}
-          onClick={() => setActiveFilter("completed")}>
-          {viewType === "requests" ? "Fulfilled" : "Completed"}
-        </button>
-        <button
-          className={`tab ${activeFilter === "pending" ? "tab-active" : ""}`}
-          onClick={() => setActiveFilter("pending")}>
-          Pending
-        </button>
-        <button
-          className={`tab ${activeFilter === "cancelled" ? "tab-active" : ""}`}
-          onClick={() => setActiveFilter("cancelled")}>
-          Cancelled
-        </button>
+
+        {/* Show different filters based on viewType */}
+        {viewType === "received" ? (
+          // Filters for Received Blood tab (blood_request.status)
+          <>
+            <button
+              className={`tab ${
+                activeFilter === "pending" ? "tab-active" : ""
+              }`}
+              onClick={() => setActiveFilter("pending")}>
+              Pending
+            </button>
+            <button
+              className={`tab ${
+                activeFilter === "accepted" ? "tab-active" : ""
+              }`}
+              onClick={() => setActiveFilter("accepted")}>
+              Accepted
+            </button>
+            <button
+              className={`tab ${
+                activeFilter === "completed" ? "tab-active" : ""
+              }`}
+              onClick={() => setActiveFilter("completed")}>
+              Completed
+            </button>
+            <button
+              className={`tab ${
+                activeFilter === "cancelled" ? "tab-active" : ""
+              }`}
+              onClick={() => setActiveFilter("cancelled")}>
+              Cancelled
+            </button>
+          </>
+        ) : viewType === "donated" ? (
+          // Filters for Donated Blood tab (donation_status)
+          <>
+            <button
+              className={`tab ${
+                activeFilter === "donated" ? "tab-active" : ""
+              }`}
+              onClick={() => setActiveFilter("donated")}>
+              Donated
+            </button>
+            <button
+              className={`tab ${
+                activeFilter === "pending" ? "tab-active" : ""
+              }`}
+              onClick={() => setActiveFilter("pending")}>
+              Pending
+            </button>
+            <button
+              className={`tab ${
+                activeFilter === "cancelled" ? "tab-active" : ""
+              }`}
+              onClick={() => setActiveFilter("canceled")}>
+              Cancelled
+            </button>
+          </>
+        ) : (
+          // Filters for Blood Requests tab
+          <>
+            <button
+              className={`tab ${
+                activeFilter === "pending" ? "tab-active" : ""
+              }`}
+              onClick={() => setActiveFilter("pending")}>
+              Pending
+            </button>
+            <button
+              className={`tab ${
+                activeFilter === "accepted" ? "tab-active" : ""
+              }`}
+              onClick={() => setActiveFilter("accepted")}>
+              Accepted
+            </button>
+            <button
+              className={`tab ${
+                activeFilter === "completed" ? "tab-active" : ""
+              }`}
+              onClick={() => setActiveFilter("completed")}>
+              Completed
+            </button>
+            <button
+              className={`tab ${
+                activeFilter === "cancelled" ? "tab-active" : ""
+              }`}
+              onClick={() => setActiveFilter("cancelled")}>
+              Cancelled
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

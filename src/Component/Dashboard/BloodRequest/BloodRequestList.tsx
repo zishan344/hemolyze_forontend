@@ -1,22 +1,48 @@
-import { Calendar, DropletIcon, Info, MapPin, User } from "lucide-react";
+import { Calendar, DropletIcon, Info, MapPin, User, Phone } from "lucide-react";
 import { getBadgeClass } from "../../../Global/GlobalVar";
 import { RequestRecord } from "./BloodRequestType";
 
+interface BloodRequestListProps {
+  filteredRequests: RequestRecord[];
+  handleCancelBloodPostRequest: (requestId: number) => Promise<void>;
+  handleUpdateAcceptedBloodRequest: (
+    requestId: number,
+    status: string
+  ) => Promise<void>;
+  loading: boolean;
+  updateLoading: boolean;
+}
+
 const BloodRequestList = ({
   filteredRequests,
-}: {
-  filteredRequests: RequestRecord[];
-}) => {
+  handleCancelBloodPostRequest,
+  loading,
+  updateLoading,
+  handleUpdateAcceptedBloodRequest,
+}: BloodRequestListProps) => {
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
       month: "long",
       day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
+
+  const calculateProgress = (request: RequestRecord) => {
+    if (request.progress_percentage !== undefined) {
+      return request.progress_percentage;
+    }
+
+    if (request.required_units <= 0) {
+      return 0;
+    }
+    return Math.min(
+      100,
+      Math.round((request.fulfilled_units / request.required_units) * 100)
+    );
+  };
+
   return (
     <div className="grid grid-cols-1 gap-6">
       {/* Blood Request List */}
@@ -43,9 +69,7 @@ const BloodRequestList = ({
                         <div className="text-sm text-base-content/70">
                           Requester
                         </div>
-                        <div className="font-medium">
-                          {request.requester_name}
-                        </div>
+                        <div className="font-medium">{request.name}</div>
                       </div>
                     </div>
 
@@ -60,6 +84,16 @@ const BloodRequestList = ({
                         </div>
                       </div>
                     </div>
+
+                    <div className="flex items-start text-sm mb-3">
+                      <Phone size={16} className="mr-2 text-gray-400 mt-1" />
+                      <div>
+                        <div className="text-sm text-base-content/70">
+                          Contact
+                        </div>
+                        <div className="font-medium">{request.phone}</div>
+                      </div>
+                    </div>
                   </div>
 
                   <div>
@@ -67,18 +101,19 @@ const BloodRequestList = ({
                       <Calendar size={16} className="mr-2 text-gray-400 mt-1" />
                       <div>
                         <div className="text-sm text-base-content/70">
-                          Request Date / Needed By
+                          Needed By Date
                         </div>
                         <div className="font-medium">
-                          {formatDate(request.request_date)}
+                          {formatDate(request.date)}
                         </div>
                         <div className="text-xs text-base-content/60">
-                          Needed by: {formatDate(request.needed_by_date)}
+                          Created:{" "}
+                          {new Date(request.created_at).toLocaleDateString()}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-start text-sm">
+                    <div className="flex items-start text-sm mb-3">
                       <DropletIcon
                         size={16}
                         className="mr-2 text-gray-400 mt-1"
@@ -88,21 +123,67 @@ const BloodRequestList = ({
                           Blood Type & Units
                         </div>
                         <div className="font-medium">
-                          {request.blood_group} • {request.units_needed} unit
-                          {request.units_needed !== 1 ? "s" : ""}
+                          {request.blood_group} • {request.required_units} unit
+                          {request.required_units !== 1 ? "s" : ""}
+                          {request.fulfilled_units > 0 && (
+                            <span className="text-sm text-base-content/60 ml-2">
+                              ({request.fulfilled_units} fulfilled)
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start text-sm mb-3">
+                      <Info size={16} className="mr-2 text-gray-400 mt-1" />
+                      <div>
+                        <div className="text-sm text-base-content/70">
+                          Urgency Level
+                        </div>
+                        <div
+                          className={`font-medium ${
+                            request.urgency_level === "critical"
+                              ? "text-error"
+                              : request.urgency_level === "urgent"
+                              ? "text-warning"
+                              : ""
+                          }`}>
+                          {request.urgency_level.charAt(0).toUpperCase() +
+                            request.urgency_level.slice(1)}
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {request.notes && (
+                {/* Progress Bar */}
+                <div className="mt-4">
+                  <div className="flex justify-between text-xs mb-1">
+                    <span>Progress</span>
+                    <span>{calculateProgress(request)}% Complete</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div
+                      className={`h-2.5 rounded-full ${
+                        request.status === "completed"
+                          ? "bg-success"
+                          : request.status === "cancelled"
+                          ? "bg-error"
+                          : request.status === "accepted"
+                          ? "bg-info"
+                          : "bg-primary"
+                      }`}
+                      style={{ width: `${calculateProgress(request)}%` }}></div>
+                  </div>
+                </div>
+
+                {request.description && (
                   <div className="mt-4 bg-base-200 p-3 rounded-md text-sm flex items-start">
                     <Info size={16} className="mr-2 text-gray-400 mt-1" />
                     <div>
                       <div className="font-medium">Notes</div>
                       <div className="text-base-content/70">
-                        {request.notes}
+                        {request.description}
                       </div>
                     </div>
                   </div>
@@ -121,18 +202,57 @@ const BloodRequestList = ({
                       <button className="btn btn-outline btn-sm btn-primary w-full mb-2">
                         Share Request
                       </button>
-                      <button className="btn btn-outline btn-sm btn-error w-full">
-                        Cancel Request
+                      <button
+                        onClick={() => handleCancelBloodPostRequest(request.id)}
+                        className="btn btn-outline btn-sm btn-error w-full">
+                        {loading ? "cancelling..." : "Cancel Request"}
                       </button>
+                    </>
+                  )}
+
+                  {request.status === "accepted" && (
+                    <>
+                      <div className="badge badge-info mb-3">Accepted</div>
+                      <p className="text-sm text-base-content/70 mb-2">
+                        Donor has accepted request
+                      </p>
+                      <button className="btn btn-outline btn-sm btn-primary w-full mb-2">
+                        Contact Donor
+                      </button>
+                      <div className="flex flex-col gap-2 flex-wrap">
+                        <button
+                          onClick={() =>
+                            handleUpdateAcceptedBloodRequest(
+                              request.id,
+                              "accepted_by_user"
+                            )
+                          }
+                          className="btn btn-outline btn-sm btn-success w-full">
+                          {updateLoading ? "receiving..." : "Mark as Received"}
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleUpdateAcceptedBloodRequest(
+                              request.id,
+                              "canceled_by_user"
+                            )
+                          }
+                          className="btn btn-outline btn-sm btn-error w-full">
+                          {updateLoading ? "cancelling..." : "Canceled"}
+                        </button>
+                      </div>
                     </>
                   )}
 
                   {request.status === "completed" && (
                     <>
-                      <div className="badge badge-success mb-3">Fulfilled</div>
+                      <div className="badge badge-success mb-3">Completed</div>
                       <p className="text-sm text-base-content/70">
                         This request was fulfilled
                       </p>
+                      <button className="btn btn-outline btn-sm btn-primary w-full mt-2">
+                        Send Thank You
+                      </button>
                     </>
                   )}
 

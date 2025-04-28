@@ -4,13 +4,16 @@ import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { AuthProvider } from "./context/AuthContext";
+import { BloodDataProvider } from "./context/BloodDataContext";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <BloodDataProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </BloodDataProvider>
     </AuthProvider>
   </StrictMode>
 );

@@ -1,20 +1,31 @@
 import { useState, useEffect } from "react";
 import { PlusCircle } from "lucide-react";
 import FilterTab from "./DonationHistory/FilterTab";
-import StatisticsCards from "./DonationHistory/StatisticsCards";
 import BloodRequestForm from "./BloodRequestForm";
-import { DonationStatus } from "../../globalType/GlobalTypes";
-import { RequestRecord } from "./BloodRequest/BloodRequestType";
 import BloodRequestList from "./BloodRequest/BloodRequestList";
+import { RequestRecord } from "./BloodRequest/BloodRequestType";
+import authApiClient from "../../Service/authApiClient";
+import ErrorAlert from "../ErrorAlert";
+import useBloodDataContext from "../../Hooks/useBloodDataContext";
+import Loading from "../../Shared/Loadings";
 
-// Reusing types from DonationHistory
 const BloodRequests = () => {
+  const {
+    handleUpdateAcceptedBloodRequest: handleUpdateAcceptedBloodRequested,
+    loading: updateLoading,
+  } = useBloodDataContext();
   const [requestHistory, setRequestHistory] = useState<RequestRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeFilter, setActiveFilter] = useState<"all" | DonationStatus>(
-    "all"
-  );
+  const [activeFilter, setActiveFilter] = useState<
+    | "all"
+    | "pending"
+    | "accepted"
+    | "completed"
+    | "cancelled"
+    | "donated"
+    | "canceled"
+  >("all");
   const [showRequestForm, setShowRequestForm] = useState(false);
 
   useEffect(() => {
@@ -24,86 +35,98 @@ const BloodRequests = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      // In a real app, this would be an API call:
-      // const requestsResponse = await authApiClient.get("/request-history/");
+      setError(null);
 
-      // For demo purposes, we'll use sample data
-      setTimeout(() => {
-        const sampleRequestHistory: RequestRecord[] = [
-          {
-            id: 1,
-            requester_name: "Thomas Lee",
-            blood_group: "B-",
-            hospital_name: "Northside Medical Center",
-            hospital_address: "789 Health Parkway",
-            request_date: "2025-04-22T09:15:00",
-            needed_by_date: "2025-04-27T09:15:00",
-            status: "pending",
-            units_needed: 2,
-            notes: "Scheduled surgery",
-            contact_number: "+1-555-123-4567",
-          },
-          {
-            id: 2,
-            requester_name: "Sophia Garcia",
-            blood_group: "AB+",
-            hospital_name: "Eastside Hospital",
-            hospital_address: "321 Care Street",
-            request_date: "2025-04-18T11:30:00",
-            needed_by_date: "2025-04-20T11:30:00",
-            status: "completed",
-            units_needed: 1,
-            contact_number: "+1-555-987-6543",
-          },
-          {
-            id: 3,
-            requester_name: "William Davis",
-            blood_group: "O-",
-            hospital_name: "Community Hospital",
-            hospital_address: "567 Medical Drive",
-            request_date: "2025-04-10T13:45:00",
-            needed_by_date: "2025-04-12T13:45:00",
-            status: "cancelled",
-            units_needed: 3,
-            notes: "Patient transferred to another facility",
-            contact_number: "+1-555-246-8135",
-          },
-        ];
-
-        setRequestHistory(sampleRequestHistory);
-        setLoading(false);
-      }, 1000);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setError("Failed to load blood request data. Please try again.");
+      // Call the API endpoint to get user's blood requests
+      const response = await authApiClient.get("/blood-request/my-requests/");
+      setRequestHistory(response.data);
+    } catch (err: unknown|any) {
+      console.error("Error fetching blood requests:", err);
+      setError(
+        err.response?.data?.message ||
+          err.response?.data?.error ||
+          "Failed to load blood request data. Please try again."
+      );
+    } finally {
       setLoading(false);
     }
   };
 
-  /* const getRelativeTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInDays = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24)
-    );
+  // Handle request form submission success
+  const handleRequestSubmitted = () => {
+    // Refresh the requests list
+    fetchData();
+    // Hide the form
+    setShowRequestForm(false);
+  };
 
-    if (diffInDays === 0) return "Today";
-    if (diffInDays === 1) return "Yesterday";
-    if (diffInDays < 30) return `${diffInDays} days ago`;
-    if (diffInDays < 365)
-      return `${Math.floor(diffInDays / 30)} month${
-        Math.floor(diffInDays / 30) > 1 ? "s" : ""
-      } ago`;
-    return `${Math.floor(diffInDays / 365)} year${
-      Math.floor(diffInDays / 365) > 1 ? "s" : ""
-    } ago`;
-  }; */
+  // Handle request cancellation
+  const handleCancelBloodPostRequest = async (requestId: number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await authApiClient.patch(`/blood-request/${requestId}/`, {
+        status: "cancelled",
+      });
 
+      // Update local state to reflect the change
+      setRequestHistory((prevHistory) =>
+        prevHistory.map((req) =>
+          req.id === requestId ? { ...req, status: "cancelled" as const } : req
+        )
+      );
+    } catch (err: unknown | any) {
+      console.error("Error canceling request:", err);
+      setError(
+        err.response?.data?.message ||
+          err.response?.data?.error ||
+          "Failed to cancel request. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateAcceptedBloodRequest = async (
+    requestId: number,
+    status: string
+  ) => {
+    try {
+      await handleUpdateAcceptedBloodRequested(requestId, status);
+    } catch (err: unknown) {
+      console.error("Error updating accepted blood request:", err);
+    }
+  };
   // Get filtered data based on active filter
   const filteredRequests =
     activeFilter === "all"
       ? requestHistory
       : requestHistory.filter((item) => item.status === activeFilter);
+
+  // Calculate statistics for the cards
+  const pendingCount = requestHistory.filter(
+    (req) => req.status === "pending"
+  ).length;
+  const completedCount = requestHistory.filter(
+    (req) => req.status === "completed"
+  ).length;
+  const acceptedCount = requestHistory.filter(
+    (req) => req.status === "accepted"
+  ).length;
+  /* const cancelledCount = requestHistory.filter(
+    (req) => req.status === "cancelled"
+  ).length; */
+  const totalCount = requestHistory.length;
+
+  // Calculate total units requested and fulfilled
+  /* const totalUnitsRequested = requestHistory.reduce(
+    (total, req) => total + req.required_units,
+    0
+  );
+  const totalUnitsFulfilled = requestHistory.reduce(
+    (total, req) => total + req.fulfilled_units,
+    0
+  ); */
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -116,6 +139,8 @@ const BloodRequests = () => {
           help.
         </p>
       </div>
+
+      {error && <ErrorAlert message={error} />}
 
       {/* Create Request Button */}
       <div className="flex justify-end mb-6">
@@ -130,31 +155,52 @@ const BloodRequests = () => {
       {/* Show Blood Request Form when button is clicked */}
       {showRequestForm && (
         <div className="mb-8">
-          <BloodRequestForm />
+          <BloodRequestForm onRequestSubmitted={handleRequestSubmitted} />
         </div>
       )}
 
       {/* Filter tabs */}
-      <FilterTab
-        activeFilter={activeFilter}
-        setActiveFilter={setActiveFilter}
-        viewType="requests"
-      />
+      <div className="mb-6">
+        <FilterTab
+          activeFilter={activeFilter}
+          setActiveFilter={setActiveFilter}
+          viewType="requests"
+        />
+      </div>
 
       {/* Statistics Cards */}
       {!loading && !error && (
-        <StatisticsCards requestHistory={requestHistory} viewType="requests" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="bg-base-100 p-4 rounded-lg shadow-md">
+            <h3 className="text-sm font-medium text-base-content/70">
+              Total Requests
+            </h3>
+            <p className="text-3xl font-bold">{totalCount}</p>
+          </div>
+          <div className="bg-base-100 p-4 rounded-lg shadow-md">
+            <h3 className="text-sm font-medium text-base-content/70">
+              Pending Requests
+            </h3>
+            <p className="text-3xl font-bold text-warning">{pendingCount}</p>
+          </div>
+          <div className="bg-base-100 p-4 rounded-lg shadow-md">
+            <h3 className="text-sm font-medium text-base-content/70">
+              Accepted Requests
+            </h3>
+            <p className="text-3xl font-bold text-info">{acceptedCount}</p>
+          </div>
+          <div className="bg-base-100 p-4 rounded-lg shadow-md">
+            <h3 className="text-sm font-medium text-base-content/70">
+              Completed Requests
+            </h3>
+            <p className="text-3xl font-bold text-success">{completedCount}</p>
+          </div>
+        </div>
       )}
 
       {/* Content */}
       {loading ? (
-        <div className="flex justify-center items-center py-20">
-          <div className="loading loading-spinner loading-lg text-primary"></div>
-        </div>
-      ) : error ? (
-        <div className="alert alert-error">
-          <span>{error}</span>
-        </div>
+        <Loading />
       ) : filteredRequests.length === 0 ? (
         <div className="text-center py-12 bg-base-200 rounded-lg">
           <div className="text-6xl mb-4">📋</div>
@@ -164,9 +210,24 @@ const BloodRequests = () => {
               ? "You don't have any blood request records yet."
               : `You don't have any ${activeFilter} blood requests.`}
           </p>
+          {activeFilter === "all" && requestHistory.length === 0 && (
+            <button
+              className="btn btn-primary mt-4"
+              onClick={() => setShowRequestForm(true)}>
+              Create Your First Request
+            </button>
+          )}
         </div>
       ) : (
-        <BloodRequestList filteredRequests={filteredRequests} />
+        <div>
+          <BloodRequestList
+            loading={loading}
+            updateLoading={updateLoading}
+            handleCancelBloodPostRequest={handleCancelBloodPostRequest}
+            filteredRequests={filteredRequests}
+            handleUpdateAcceptedBloodRequest={handleUpdateAcceptedBloodRequest}
+          />
+        </div>
       )}
     </div>
   );

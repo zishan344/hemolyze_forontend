@@ -202,7 +202,7 @@ const UserDetailForm = ({
           </button>
         )}
       </div>
-      {errorMsg && <ErrorAlert error={errorMsg} />}
+      {errorMsg && <ErrorAlert message={errorMsg} />}
     </form>
   );
 };

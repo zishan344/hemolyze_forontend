@@ -24,7 +24,7 @@ export const specialEvents: SpecialEvent[] = [
     startDate: new Date(new Date().getFullYear(), 5, 10), // June 10
     endDate: new Date(new Date().getFullYear(), 5, 15), // June 15
     description: "Celebrating blood donors around the world",
-    icon: <Heart className="text-primary-content" size={18} />,
+    icon: <Heart className="text-primary-content" size={18} />, 
     modalTitle: "World Blood Donor Day Special",
     modalDescription:
       "Join us in celebrating World Blood Donor Day! Your donation now has double the impact as we work to increase blood supplies for summer emergencies.",

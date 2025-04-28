@@ -194,7 +194,7 @@ const DashboardLayout = () => {
         className={`flex-1 ${
           isSidebarOpen ? "ml-64" : "ml-20"
         } transition-all duration-300`}>
-        <div className="p-6">
+        <div className="p-6 bg-base-200">
           <Outlet />
         </div>
       </div>

@@ -43,7 +43,7 @@ const ActivateAccount = () => {
             </Link>
           </div>
         )}
-        {error && <ErrorAlert error={error} />}
+        {error && <ErrorAlert message={error} />}
       </div>
     </div>
   );
