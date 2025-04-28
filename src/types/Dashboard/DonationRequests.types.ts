@@ -1,5 +1,15 @@
 import { DonationStatus, RequestStatus } from "../GlobalType";
 
+export interface acceptedBloodDonations {
+  id: number;
+  user: number;
+  request_user: number;
+  request_accept: number;
+  donation_status: string;
+  units: number;
+  date: string;
+  donor_name: string;
+}
 export interface BloodRequestItem {
   id: number;
   name: string;

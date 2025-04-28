@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { changePasswordType, userDataType } from "../../globalType/AuthType";
 
 interface ChangePasswordFormProps {
+  loading: boolean;
   user: null | userDataType;
   changePassword: (
     data: changePasswordType
@@ -11,6 +12,7 @@ interface ChangePasswordFormProps {
 const ChangePasswordForm = ({
   user,
   changePassword,
+  loading,
 }: ChangePasswordFormProps) => {
   const {
     register: registerPassword,
@@ -22,7 +24,6 @@ const ChangePasswordForm = ({
   const onPasswordSubmit = async (data: changePasswordType) => {
     const response = await changePassword(data);
     if (response?.success) {
-      await user;
       resetPassword();
     }
   };
@@ -76,9 +77,10 @@ const ChangePasswordForm = ({
       </div>
       <div className="flex justify-end">
         <button
+          disabled={loading}
           type="submit"
           className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90">
-          Change Password
+          {loading ? "changing..." : "Change Password"}
         </button>
       </div>
     </form>

@@ -18,14 +18,22 @@ import authApiClient from "../../Service/authApiClient";
 
 interface BloodRequestFormProps {
   onRequestSubmitted?: () => void;
+  requestToUpdate?: RequestRecord | null;
+  isModal?: boolean; // Add new prop to indicate if displayed in modal
 }
 
-const BloodRequestForm = ({ onRequestSubmitted }: BloodRequestFormProps) => {
+const BloodRequestForm = ({
+  onRequestSubmitted,
+  requestToUpdate,
+  isModal = false,
+}: BloodRequestFormProps) => {
   const { user } = useAuthContext();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [progressPercentage, setProgressPercentage] = useState<number>(0);
+  const [progressPercentage, setProgressPercentage] = useState<number>(
+    requestToUpdate?.progress_percentage || 0
+  );
 
   const {
     register,
@@ -33,11 +41,23 @@ const BloodRequestForm = ({ onRequestSubmitted }: BloodRequestFormProps) => {
     reset,
     formState: { errors },
   } = useForm<BloodRequestFormValues>({
-    defaultValues: {
-      requester_name: user?.username || "",
-      units_needed: 1,
-      urgency_level: "normal",
-    },
+    defaultValues: requestToUpdate
+      ? {
+          requester_name: requestToUpdate.name,
+          blood_group: requestToUpdate.blood_group,
+          units_needed: requestToUpdate.required_units,
+          urgency_level: requestToUpdate.urgency_level,
+          hospital_name: requestToUpdate.hospital_name,
+          hospital_address: requestToUpdate.hospital_address,
+          needed_by_date: requestToUpdate.date.split("T")[0],
+          contact_number: requestToUpdate.phone,
+          notes: requestToUpdate.description,
+        }
+      : {
+          requester_name: user?.username || "",
+          units_needed: 1,
+          urgency_level: "normal",
+        },
   });
 
   const onSubmit = async (data: BloodRequestFormValues) => {
@@ -58,19 +78,31 @@ const BloodRequestForm = ({ onRequestSubmitted }: BloodRequestFormProps) => {
         date: data.needed_by_date,
       };
 
-      // Make API call using the endpoint defined in your Django ViewSet
-      const response = await authApiClient.post("/blood-request/", requestData);
+      let response;
 
-      setSuccess(
-        "Blood request submitted successfully! Donors will be notified."
-      );
+      // If we have a request to update, use PATCH request, otherwise POST for new request
+      if (requestToUpdate) {
+        response = await authApiClient.patch(
+          `/blood-request/${requestToUpdate.id}/`,
+          requestData
+        );
+        setSuccess("Blood request updated successfully!");
+      } else {
+        response = await authApiClient.post("/blood-request/", requestData);
+        setSuccess(
+          "Blood request submitted successfully! Donors will be notified."
+        );
+      }
 
       // If the API returns the progress percentage
       if (response.data && response.data.progress_percentage !== undefined) {
         setProgressPercentage(response.data.progress_percentage);
       }
 
-      reset(); // Reset form after successful submission
+      // Only reset form for new requests, not updates
+      if (!requestToUpdate) {
+        reset();
+      }
 
       // Notify parent component if callback provided
       if (onRequestSubmitted) {
@@ -81,12 +113,17 @@ const BloodRequestForm = ({ onRequestSubmitted }: BloodRequestFormProps) => {
       setTimeout(() => {
         setSuccess(null);
       }, 5000);
-    } catch (err: any) {
-      console.error("Error submitting blood request:", err);
+    } catch (err: unknown) {
+      console.error("Error handling blood request:", err);
+      const error = err as {
+        response?: { data?: { message?: string; error?: string } };
+      };
       setError(
-        err.response?.data?.message ||
-          err.response?.data?.error ||
-          "Failed to submit blood request. Please try again."
+        error.response?.data?.message ||
+          error.response?.data?.error ||
+          `Failed to ${
+            requestToUpdate ? "update" : "submit"
+          } blood request. Please try again.`
       );
     } finally {
       setLoading(false);
@@ -102,8 +139,10 @@ const BloodRequestForm = ({ onRequestSubmitted }: BloodRequestFormProps) => {
   const maxDateString = maxDate.toISOString().split("T")[0];
 
   return (
-    <div className="bg-base-100 shadow-md rounded-lg p-6">
-      <h2 className="text-2xl font-bold mb-6">Request Blood Donation</h2>
+    <div className={`${isModal ? "" : "bg-base-100 shadow-md rounded-lg p-6"}`}>
+      {!isModal && (
+        <h2 className="text-2xl font-bold mb-6">Request Blood Donation</h2>
+      )}
 
       {error && <ErrorAlert message={error} />}
       {success && <SuccessAlert message={success} />}
@@ -295,6 +334,7 @@ const BloodRequestForm = ({ onRequestSubmitted }: BloodRequestFormProps) => {
                 }`}
                 min="1"
                 max="10"
+                readOnly={true}
                 {...register("units_needed", {
                   required: "Number of units is required",
                   min: {
@@ -351,15 +391,20 @@ const BloodRequestForm = ({ onRequestSubmitted }: BloodRequestFormProps) => {
         {/* Notes */}
         <div>
           <label className="block text-sm font-medium mb-2">
-            Additional Notes (Optional)
+            Additional Notes
           </label>
           <div className="relative">
             <Info className="absolute left-3 top-3 text-gray-400" size={20} />
             <textarea
               className="textarea textarea-bordered w-full pl-10 h-24"
               placeholder="Important details about the request e.g., reason for blood need, urgency, etc."
-              {...register("notes")}></textarea>
+              {...register("notes", {
+                required: "notes is required",
+              })}></textarea>
           </div>
+          {errors.notes && (
+            <p className="mt-1 text-sm text-error">{errors.notes.message}</p>
+          )}
         </div>
 
         {/* Progress Indicator when request is updated */}
@@ -387,6 +432,8 @@ const BloodRequestForm = ({ onRequestSubmitted }: BloodRequestFormProps) => {
                 <span className="loading loading-spinner loading-sm"></span>
                 Processing...
               </>
+            ) : requestToUpdate ? (
+              "Update Blood Request"
             ) : (
               "Submit Blood Request"
             )}

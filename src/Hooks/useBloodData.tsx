@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import authApiClient from "../Service/authApiClient";
 import { Donor } from "../types/Donor/Donor.typ";
 import {
+  acceptedBloodDonations,
   AcceptedRequestItem,
   BloodRequestItem,
 } from "../types/Dashboard/DonationRequests.types";
@@ -20,7 +21,8 @@ const useBloodData = () => {
   const [error, setError] = useState<string | null>(null);
   const [filteredDonors, setFilteredDonors] = useState<Donor[]>([]);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
+  const [bloodDonationAccepted, setBloodDonationAccepted] =
+    useState<acceptedBloodDonations[]>();
   // fetching donor
   const fetchDonors = async (): Promise<void> => {
     try {
@@ -91,6 +93,26 @@ const useBloodData = () => {
     },
     []
   );
+
+  const fetchBloodDonationAccepted = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Get the user's accepted requests
+      const response = await authApiClient.get(`my-donations/`);
+      setBloodDonationAccepted(response.data);
+    } catch (err: any) {
+      console.error("Error fetching accepted requests:", err);
+      setError(
+        err.response?.data?.message ||
+          err.response?.data?.error ||
+          "Failed to load accepted requests. Please try again."
+      );
+      // We don't set the main error here as it's not critical to the main functionality
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const handleRequestAccepted = async (requestId: number, units: number) => {
     try {
@@ -202,6 +224,8 @@ const useBloodData = () => {
     handleUpdateDonationStatus,
     handleRequestAccepted,
     handleUpdateAcceptedBloodRequest,
+    fetchBloodDonationAccepted,
+    bloodDonationAccepted,
     successMessage,
     error,
     loading,

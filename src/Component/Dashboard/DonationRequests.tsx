@@ -9,6 +9,8 @@ import useBloodDataContext from "../../Hooks/useBloodDataContext";
 const DonationRequests = () => {
   const {
     fetchDonationRequests,
+    fetchBloodDonationAccepted,
+    bloodDonationAccepted,
     bloodDonationRequests,
     loading,
     error,
@@ -17,16 +19,26 @@ const DonationRequests = () => {
   useEffect(() => {
     const fetchRequests = async () => {
       await fetchDonationRequests();
+      await fetchBloodDonationAccepted();
     };
     fetchRequests();
   }, []);
   // Filter requests based on the selected filter
-  const filteredRequests = bloodDonationRequests.filter(
-    (req) => req.status === "pending"
-  );
-  // Handle request acceptance
+  const filteredRequests = bloodDonationRequests
+    ? bloodDonationRequests.filter((req) => {
+        // Filter for pending requests
+        const isPending = req.status === "pending";
 
-  // Handle donation status update
+        // Filter out requests that have already been accepted
+        const isNotAccepted = bloodDonationAccepted
+          ? !bloodDonationAccepted.some(
+              (donation) => donation.request_user === req.id
+            )
+          : true;
+
+        return isPending && isNotAccepted;
+      })
+    : [];
 
   return (
     <div className="container mx-auto py-8 px-4">

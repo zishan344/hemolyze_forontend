@@ -1,6 +1,7 @@
 import React from "react";
 import { Donor } from "./Donor/Donor.typ";
 import {
+  acceptedBloodDonations,
   AcceptedRequestItem,
   BloodRequestItem,
 } from "./Dashboard/DonationRequests.types";
@@ -23,6 +24,8 @@ export interface BloodDataContextType {
     requestId: number,
     status: string
   ) => Promise<void>;
+  fetchBloodDonationAccepted: () => Promise<void>;
+  bloodDonationAccepted: acceptedBloodDonations[];
   successMessage: string | null;
   loading: boolean;
   error: string | null;

@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { PlusCircle } from "lucide-react";
 import FilterTab from "./DonationHistory/FilterTab";
-import BloodRequestForm from "./BloodRequestForm";
 import BloodRequestList from "./BloodRequest/BloodRequestList";
 import { RequestRecord } from "./BloodRequest/BloodRequestType";
 import authApiClient from "../../Service/authApiClient";
 import ErrorAlert from "../ErrorAlert";
 import useBloodDataContext from "../../Hooks/useBloodDataContext";
 import Loading from "../../Shared/Loadings";
+import BloodRequestModal from "./BloodRequest/BloodRequestModal";
 
 const BloodRequests = () => {
   const {
@@ -26,7 +26,10 @@ const BloodRequests = () => {
     | "donated"
     | "canceled"
   >("all");
-  const [showRequestForm, setShowRequestForm] = useState(false);
+  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [requestToUpdate, setRequestToUpdate] = useState<RequestRecord | null>(
+    null
+  );
 
   useEffect(() => {
     fetchData();
@@ -40,7 +43,7 @@ const BloodRequests = () => {
       // Call the API endpoint to get user's blood requests
       const response = await authApiClient.get("/blood-request/my-requests/");
       setRequestHistory(response.data);
-    } catch (err: unknown|any) {
+    } catch (err: unknown | any) {
       console.error("Error fetching blood requests:", err);
       setError(
         err.response?.data?.message ||
@@ -57,7 +60,9 @@ const BloodRequests = () => {
     // Refresh the requests list
     fetchData();
     // Hide the form
-    setShowRequestForm(false);
+    setShowRequestModal(false);
+    // Reset the request to update
+    setRequestToUpdate(null);
   };
 
   // Handle request cancellation
@@ -87,6 +92,13 @@ const BloodRequests = () => {
     }
   };
 
+  // Handle updating a blood request
+  const handleUpdateRequest = (request: RequestRecord) => {
+    setRequestToUpdate(request);
+    setShowRequestModal(true);
+  };
+
+  // Keep the existing handleUpdateAcceptedBloodRequest function unchanged
   const handleUpdateAcceptedBloodRequest = async (
     requestId: number,
     status: string
@@ -97,6 +109,7 @@ const BloodRequests = () => {
       console.error("Error updating accepted blood request:", err);
     }
   };
+
   // Get filtered data based on active filter
   const filteredRequests =
     activeFilter === "all"
@@ -146,18 +159,25 @@ const BloodRequests = () => {
       <div className="flex justify-end mb-6">
         <button
           className="btn btn-primary flex items-center gap-2"
-          onClick={() => setShowRequestForm(!showRequestForm)}>
+          onClick={() => {
+            setShowRequestModal(true);
+            if (!requestToUpdate) setRequestToUpdate(null);
+          }}>
           <PlusCircle size={18} />
-          {showRequestForm ? "Hide Request Form" : "Create New Request"}
+          Create New Request
         </button>
       </div>
 
-      {/* Show Blood Request Form when button is clicked */}
-      {showRequestForm && (
-        <div className="mb-8">
-          <BloodRequestForm onRequestSubmitted={handleRequestSubmitted} />
-        </div>
-      )}
+      {/* Blood Request Modal */}
+      <BloodRequestModal
+        isVisible={showRequestModal}
+        onClose={() => {
+          setShowRequestModal(false);
+          setRequestToUpdate(null);
+        }}
+        onRequestSubmitted={handleRequestSubmitted}
+        requestToUpdate={requestToUpdate}
+      />
 
       {/* Filter tabs */}
       <div className="mb-6">
@@ -213,7 +233,7 @@ const BloodRequests = () => {
           {activeFilter === "all" && requestHistory.length === 0 && (
             <button
               className="btn btn-primary mt-4"
-              onClick={() => setShowRequestForm(true)}>
+              onClick={() => setShowRequestModal(true)}>
               Create Your First Request
             </button>
           )}
@@ -226,6 +246,7 @@ const BloodRequests = () => {
             handleCancelBloodPostRequest={handleCancelBloodPostRequest}
             filteredRequests={filteredRequests}
             handleUpdateAcceptedBloodRequest={handleUpdateAcceptedBloodRequest}
+            handleUpdateRequest={handleUpdateRequest}
           />
         </div>
       )}

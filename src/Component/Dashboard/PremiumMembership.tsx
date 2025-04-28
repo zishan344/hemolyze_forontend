@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { Crown, ArrowRight, Clock, Shield, Medal, Star } from "lucide-react";
 
 // Mock membership data - would come from API in a real app
@@ -74,10 +73,10 @@ const PremiumMembership = () => {
             <span>Active Premium Member</span>
           </div>
         ) : (
-          <Link to="/donation" className="mt-4 md:mt-0 btn btn-primary">
+          <button className="mt-4 md:mt-0 btn btn-primary">
             Become a Premium Member
             <ArrowRight className="ml-1" size={16} />
-          </Link>
+          </button>
         )}
       </div>
 
@@ -140,15 +139,12 @@ const PremiumMembership = () => {
                   </li>
                 ))}
               </ul>
-              <Link
-                to={`/donation?tier=${tier.name.toLowerCase()}&amount=${
-                  tier.price
-                }`}
+              <button
                 className={`btn w-full ${
                   tier.recommended ? "btn-primary" : "btn-outline"
                 }`}>
                 Select {tier.name}
-              </Link>
+              </button>
             </div>
           ))}
         </div>

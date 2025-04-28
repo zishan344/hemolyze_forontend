@@ -9,6 +9,7 @@ interface BloodRequestListProps {
     requestId: number,
     status: string
   ) => Promise<void>;
+  handleUpdateRequest?: (request: RequestRecord) => void; // Add new prop for update functionality
   loading: boolean;
   updateLoading: boolean;
 }
@@ -19,6 +20,7 @@ const BloodRequestList = ({
   loading,
   updateLoading,
   handleUpdateAcceptedBloodRequest,
+  handleUpdateRequest,
 }: BloodRequestListProps) => {
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -206,6 +208,13 @@ const BloodRequestList = ({
                         onClick={() => handleCancelBloodPostRequest(request.id)}
                         className="btn btn-outline btn-sm btn-error w-full">
                         {loading ? "cancelling..." : "Cancel Request"}
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleUpdateRequest && handleUpdateRequest(request)
+                        }
+                        className="btn mt-2 btn-outline btn-sm btn-info w-full">
+                        Update Request
                       </button>
                     </>
                   )}

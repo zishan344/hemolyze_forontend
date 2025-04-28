@@ -126,19 +126,18 @@ const useAuth = () => {
       return handleAPIError(error);
     }
   };
-
    */
+
   //password change
   const changePassword = async (data: changePasswordType) => {
     setErrorMsg("");
+    setLoading(true);
     try {
-      await apiClient.post("/auth/users/set_password/", data, {
-        headers: {
-          Authorization: `JWT ${authTokens?.access}`,
-        },
-      });
+      await authApiClient.post("/auth/users/set_password/", data);
     } catch (error) {
       return handleAPIError(error);
+    } finally {
+      setLoading(false);
     }
   };
 
