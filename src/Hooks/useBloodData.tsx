@@ -21,8 +21,9 @@ const useBloodData = () => {
   const [error, setError] = useState<string | null>(null);
   const [filteredDonors, setFilteredDonors] = useState<Donor[]>([]);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [bloodDonationAccepted, setBloodDonationAccepted] =
-    useState<acceptedBloodDonations[]>();
+  const [bloodDonationAccepted, setBloodDonationAccepted] = useState<
+    acceptedBloodDonations[]
+  >([]);
   // fetching donor
   const fetchDonors = async (): Promise<void> => {
     try {

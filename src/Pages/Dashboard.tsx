@@ -2,7 +2,6 @@ import useAuthContext from "../Hooks/useAuthContext";
 import DonationCTA from "../Component/Payment/DonationCTA";
 import useDonationHistory from "../Hooks/useDonationHistory";
 import Loading from "../Shared/Loadings";
-import PremiumPromo from "../Component/Premium/PremiumPromo";
 import RecentActivity from "../Component/Dashboard/DashboardIndex.tsx/RecentActivity";
 import StatsCards from "../Component/Dashboard/DashboardIndex.tsx/StatsCards";
 import {

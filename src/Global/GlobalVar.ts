@@ -1,8 +1,8 @@
-import { BloodPostStatus } from "../types/Dashboard/DonationRequests.types";
+import { RequestStatus } from "../types/GlobalType";
 
 export const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
-export const getBadgeClass = (status: BloodPostStatus) => {
+export const getBadgeClass = (status: RequestStatus) => {
   switch (status) {
     case "completed":
       return "badge-success";

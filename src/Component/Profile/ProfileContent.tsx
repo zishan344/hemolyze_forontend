@@ -101,11 +101,7 @@ const ProfileContent = ({ activeTab }: { activeTab: activeTabType }) => {
           </div>
         </div>
       ) : (
-        <ChangePasswordForm
-          loading={loading}
-          user={user}
-          changePassword={changePassword}
-        />
+        <ChangePasswordForm loading={loading} changePassword={changePassword} />
       )}
     </div>
   );

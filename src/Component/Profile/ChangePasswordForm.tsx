@@ -1,16 +1,14 @@
 import { Lock } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { changePasswordType, userDataType } from "../../globalType/AuthType";
+import { changePasswordType } from "../../globalType/AuthType";
 
 interface ChangePasswordFormProps {
   loading: boolean;
-  user: null | userDataType;
   changePassword: (
     data: changePasswordType
   ) => Promise<{ success: boolean; message?: string } | undefined>;
 }
 const ChangePasswordForm = ({
-  user,
   changePassword,
   loading,
 }: ChangePasswordFormProps) => {

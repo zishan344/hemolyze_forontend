@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { userLoginType } from "../globalType/AuthType";
 import useAuthContext from "../Hooks/useAuthContext";
-import { Link, Navigate, useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   ArrowRight,
   Facebook,

@@ -13,7 +13,10 @@ import { bloodGroups } from "../../Global/GlobalVar";
 import ErrorAlert from "../ErrorAlert";
 import SuccessAlert from "../SuccessAlert";
 import useAuthContext from "../../Hooks/useAuthContext";
-import { BloodRequestFormValues } from "./BloodRequest/BloodRequestType";
+import {
+  BloodRequestFormValues,
+  RequestRecord,
+} from "./BloodRequest/BloodRequestType";
 import authApiClient from "../../Service/authApiClient";
 
 interface BloodRequestFormProps {

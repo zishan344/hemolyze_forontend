@@ -1,27 +1,14 @@
 import { useState } from "react";
-import { AlertCircle, CheckCircle, ArrowLeft } from "lucide-react";
+import { AlertCircle, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import PaymentOptions from "../Component/Payment/PaymentOptions";
 
-import useAuthContext from "../Hooks/useAuthContext";
 import authApiClient from "../Service/authApiClient";
-import PaymentSuccess from "../Component/Payment/PaymentSuccess";
-
-type CardDetails = {
-  cardNumber: string;
-  cardholderName: string;
-  expiryDate: string;
-  cvv: string;
-};
-
-type DonationType = "general" | "emergency" | "priority";
 
 const Donation = () => {
-  const { user } = useAuthContext();
   const [amount, setAmount] = useState<number>(25);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
-  const [paymentSuccess, setPaymentSuccess] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Handle payment submission
@@ -79,33 +66,31 @@ const Donation = () => {
       {/* Success message */}
       {/* <PaymentSuccess amount={amount} paymentSuccess={paymentSuccess} /> */}
 
-      {!paymentSuccess && (
-        <div className="  max-w-3xl mx-auto">
-          {/* Donation type selection - Left sidebar */}
+      <div className="  max-w-3xl mx-auto">
+        {/* Donation type selection - Left sidebar */}
 
-          {/* Main payment content - Right area */}
-          <div className="lg:col-span-2">
-            <div className="mb-6">
-              <PaymentOptions
-                onAmountSelect={setAmount}
-                selectedAmount={amount}
-              />
-              <div className="flex justify-between mt-6">
-                <Link to="/dashboard" className="btn btn-outline">
-                  <ArrowLeft size={16} className="mr-2" />
-                  Cancel
-                </Link>
-                <button
-                  disabled={isProcessing}
-                  onClick={() => handlePaymentSubmit(amount)}
-                  className="btn btn-primary">
-                  {isProcessing ? "Processing..." : "Proceed to Payment"}
-                </button>
-              </div>
+        {/* Main payment content - Right area */}
+        <div className="lg:col-span-2">
+          <div className="mb-6">
+            <PaymentOptions
+              onAmountSelect={setAmount}
+              selectedAmount={amount}
+            />
+            <div className="flex justify-between mt-6">
+              <Link to="/dashboard" className="btn btn-outline">
+                <ArrowLeft size={16} className="mr-2" />
+                Cancel
+              </Link>
+              <button
+                disabled={isProcessing}
+                onClick={() => handlePaymentSubmit(amount)}
+                className="btn btn-primary">
+                {isProcessing ? "Processing..." : "Proceed to Payment"}
+              </button>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
