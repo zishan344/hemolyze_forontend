@@ -5,16 +5,19 @@ import Loading from "../Shared/Loadings";
 import RecentActivity from "../Component/Dashboard/DashboardIndex.tsx/RecentActivity";
 import StatsCards from "../Component/Dashboard/DashboardIndex.tsx/StatsCards";
 import {
-  activeRequests,
+  totalRequest,
   livesImpacted,
   totalDonations,
   upcomingDonations as upcomingDonation,
 } from "../utils/dashboard.index.utils";
+import useBloodDataContext from "../Hooks/useBloodDataContext";
 
 const Dashboard = () => {
   const { user } = useAuthContext();
   const { donationHistory, receivedHistory, error, loading } =
     useDonationHistory();
+  const { requestHistory } = useBloodDataContext();
+  console.log(receivedHistory);
   const totalDonation = totalDonations(donationHistory);
   const upcomingDonations = upcomingDonation(donationHistory);
   if (loading) return <Loading />;
@@ -31,7 +34,7 @@ const Dashboard = () => {
 
       {/* Stats Cards */}
       <StatsCards
-        activeRequests={activeRequests(receivedHistory)}
+        totalRequest={totalRequest(requestHistory)}
         livesImpacted={livesImpacted(totalDonation, receivedHistory.length)}
         totalDonations={totalDonation}
         upcomingDonations={upcomingDonations.length}

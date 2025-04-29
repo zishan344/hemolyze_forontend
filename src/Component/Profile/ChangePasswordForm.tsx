@@ -1,6 +1,7 @@
 import { Lock } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { changePasswordType } from "../../globalType/AuthType";
+import toast from "react-hot-toast";
 
 interface ChangePasswordFormProps {
   loading: boolean;
@@ -22,6 +23,7 @@ const ChangePasswordForm = ({
   const onPasswordSubmit = async (data: changePasswordType) => {
     const response = await changePassword(data);
     if (response?.success) {
+      toast.success("Password changed successfully");
       resetPassword();
     }
   };

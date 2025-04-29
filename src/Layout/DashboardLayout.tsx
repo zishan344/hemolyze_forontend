@@ -15,6 +15,10 @@ import {
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import useAuthContext from "../Hooks/useAuthContext";
 
+import { Toaster } from "react-hot-toast";
+
+import Swal from "sweetalert2";
+
 const DashboardLayout = () => {
   const { user, logoutUser } = useAuthContext();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -46,8 +50,24 @@ const DashboardLayout = () => {
   };
 
   const handleLogout = () => {
-    logoutUser();
-    navigate("/login");
+    Swal.fire({
+      title: "Are you sure signout account?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, signout!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logoutUser();
+        Swal.fire({
+          title: "Done!",
+          text: "Your account signing out.",
+          icon: "success",
+        });
+        navigate("/login");
+      }
+    });
   };
 
   const navItems = [
@@ -232,6 +252,7 @@ const DashboardLayout = () => {
         } transition-all duration-300`}>
         <div className="p-6 bg-base-200">
           <Outlet />
+          <Toaster />
         </div>
       </div>
     </div>

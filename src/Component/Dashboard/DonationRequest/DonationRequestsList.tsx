@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { DonationRequestListType } from "../../../types/Dashboard/DonationRequests.types";
 import RequestDetails from "./RequestDetails";
-import SuccessAlert from "../../SuccessAlert";
-import ErrorAlert from "../../ErrorAlert";
 
 import useBloodDataContext from "../../../Hooks/useBloodDataContext";
+import toast from "react-hot-toast";
 
 const DonationRequestsList = ({
   filteredRequests,
-  loading,
+  // loading,
   successMessage,
   error,
 }: DonationRequestListType) => {
@@ -31,31 +30,10 @@ const DonationRequestsList = ({
     }
   };
 
-  // handle donation status
-
-  /*  const handleUpdateStatus = async (
-    acceptedRequestId: number,
-    status: string
-  ): Promise<void> => {
-    try {
-      setProcessingRequestIds((prev) => [...prev, acceptedRequestId]);
-
-      await handleUpdateDonationStatus(acceptedRequestId, status);
-    } catch (err: any) {
-      console.error("Error updating donation status:", err);
-    } finally {
-      setProcessingRequestIds((prev) =>
-        prev.filter((id) => id !== acceptedRequestId)
-      );
-    }
-  };
- */
-  // console.log("total requsts", filteredRequests);
   return (
     <div className="grid grid-cols-1 gap-6">
-      {successMessage && <SuccessAlert message={successMessage} />}
-      {error && <ErrorAlert message={error} />}
-
+      {successMessage && toast.success(successMessage)}
+      {error && toast.error(error)}
       {filteredRequests.map((request) => {
         // const acceptedRequest = isRequestAccepted();
         return (
@@ -67,7 +45,7 @@ const DonationRequestsList = ({
                 {/* Left side - Request details */}
                 <RequestDetails
                   handleAcceptRequest={handleAcceptRequest}
-                  loading={loading || processingRequestIds.includes(request.id)}
+                  loading={processingRequestIds.includes(request.id)}
                   request={{
                     id: request.id,
                     name: request.name,

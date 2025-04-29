@@ -10,6 +10,7 @@ export interface acceptedBloodDonations {
   date: string;
   donor_name: string;
 }
+
 export interface BloodRequestItem {
   id: number;
   name: string;

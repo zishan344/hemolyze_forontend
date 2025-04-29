@@ -2,14 +2,11 @@ import { useEffect } from "react";
 
 import DonationRequestsList from "./DonationRequest/DonationRequestsList";
 
-import SuccessAlert from "../SuccessAlert";
-import ErrorAlert from "../ErrorAlert";
 import useBloodDataContext from "../../Hooks/useBloodDataContext";
 
 const DonationRequests = () => {
   const {
     fetchDonationRequests,
-    fetchBloodDonationAccepted,
     bloodDonationAccepted,
     bloodDonationRequests,
     loading,
@@ -19,7 +16,6 @@ const DonationRequests = () => {
   useEffect(() => {
     const fetchRequests = async () => {
       await fetchDonationRequests();
-      await fetchBloodDonationAccepted();
     };
     fetchRequests();
   }, []);
@@ -53,10 +49,9 @@ const DonationRequests = () => {
       </div>
 
       {/* Success message */}
-      {successMessage && <SuccessAlert message={successMessage} />}
+      {/* {successMessage && <SuccessAlert message={successMessage} />} */}
 
       {/* Error message */}
-      {error && <ErrorAlert message={error} />}
 
       {/* Filter tabs */}
 

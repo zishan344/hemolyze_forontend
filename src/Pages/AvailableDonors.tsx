@@ -5,6 +5,7 @@ import useBloodDataContext from "../Hooks/useBloodDataContext";
 import SearchFilter from "../Component/Dashboard/AvailableDonors/SearchFilter";
 import CtaSection from "../Component/Dashboard/AvailableDonors/CtaSection";
 import Loadings from "../Shared/Loadings";
+import useAuth from "../Hooks/useAuth";
 
 const AvailableDonors = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,6 +18,8 @@ const AvailableDonors = () => {
     error,
     loading,
   } = useBloodDataContext();
+
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -113,20 +116,22 @@ const AvailableDonors = () => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">😢</div>
-          <h3 className="text-xl font-bold mb-2">No donors found</h3>
-          <p className="text-base-content/70">
-            Try adjusting your search or filters
-          </p>
-        </div>
+        <>
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">😢</div>
+            <h3 className="text-xl font-bold mb-2">No donors found</h3>
+            <p className="text-base-content/70">
+              Try adjusting your search or filters
+            </p>
+          </div>
+          {/* Pagination */}
+          {/*TODO!update in near future  */}
+
+          {/* CTA Section */}
+
+          {!user && <CtaSection />}
+        </>
       )}
-
-      {/* Pagination */}
-      {/*TODO!update in near future  */}
-
-      {/* CTA Section */}
-      <CtaSection />
     </div>
   );
 };

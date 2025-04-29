@@ -1,22 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { PlusCircle } from "lucide-react";
 import FilterTab from "./DonationHistory/FilterTab";
 import BloodRequestList from "./BloodRequest/BloodRequestList";
 import { RequestRecord } from "./BloodRequest/BloodRequestType";
-import authApiClient from "../../Service/authApiClient";
-import ErrorAlert from "../ErrorAlert";
 import useBloodDataContext from "../../Hooks/useBloodDataContext";
 import Loading from "../../Shared/Loadings";
 import BloodRequestModal from "./BloodRequest/BloodRequestModal";
+import toast from "react-hot-toast";
 
 const BloodRequests = () => {
   const {
     handleUpdateAcceptedBloodRequest: handleUpdateAcceptedBloodRequested,
-    loading: updateLoading,
+    handleCancelBloodPostRequest,
+    loading,
+    updateLoading,
+    error,
+    requestHistory,
   } = useBloodDataContext();
-  const [requestHistory, setRequestHistory] = useState<RequestRecord[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  // console.log("hear are my data", requestHistory);
+  // const [loading, setLoading] = useState<boolean>(true);
+  // const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<
     | "all"
     | "pending"
@@ -31,34 +34,10 @@ const BloodRequests = () => {
     null
   );
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Call the API endpoint to get user's blood requests
-      const response = await authApiClient.get("/blood-request/my-requests/");
-      setRequestHistory(response.data);
-    } catch (err: unknown | any) {
-      console.error("Error fetching blood requests:", err);
-      setError(
-        err.response?.data?.message ||
-          err.response?.data?.error ||
-          "Failed to load blood request data. Please try again."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Handle request form submission success
   const handleRequestSubmitted = () => {
     // Refresh the requests list
-    fetchData();
+    // fetchData();
     // Hide the form
     setShowRequestModal(false);
     // Reset the request to update
@@ -66,32 +45,13 @@ const BloodRequests = () => {
   };
 
   // Handle request cancellation
-  const handleCancelBloodPostRequest = async (requestId: number) => {
-    setLoading(true);
-    setError(null);
+  const handleCancelRequest = async (requestId: number) => {
     try {
-      await authApiClient.patch(`/blood-request/${requestId}/`, {
-        status: "cancelled",
-      });
-
-      // Update local state to reflect the change
-      setRequestHistory((prevHistory) =>
-        prevHistory.map((req) =>
-          req.id === requestId ? { ...req, status: "cancelled" as const } : req
-        )
-      );
-    } catch (err: unknown | any) {
+      await handleCancelBloodPostRequest(requestId);
+    } catch (err: unknown) {
       console.error("Error canceling request:", err);
-      setError(
-        err.response?.data?.message ||
-          err.response?.data?.error ||
-          "Failed to cancel request. Please try again."
-      );
-    } finally {
-      setLoading(false);
     }
   };
-
   // Handle updating a blood request
   const handleUpdateRequest = (request: RequestRecord) => {
     setRequestToUpdate(request);
@@ -126,20 +86,7 @@ const BloodRequests = () => {
   const acceptedCount = requestHistory.filter(
     (req) => req.status === "accepted"
   ).length;
-  /* const cancelledCount = requestHistory.filter(
-    (req) => req.status === "cancelled"
-  ).length; */
   const totalCount = requestHistory.length;
-
-  // Calculate total units requested and fulfilled
-  /* const totalUnitsRequested = requestHistory.reduce(
-    (total, req) => total + req.required_units,
-    0
-  );
-  const totalUnitsFulfilled = requestHistory.reduce(
-    (total, req) => total + req.fulfilled_units,
-    0
-  ); */
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -153,7 +100,7 @@ const BloodRequests = () => {
         </p>
       </div>
 
-      {error && <ErrorAlert message={error} />}
+      {error && toast.error(error)}
 
       {/* Create Request Button */}
       <div className="flex justify-end mb-6">
@@ -243,7 +190,7 @@ const BloodRequests = () => {
           <BloodRequestList
             loading={loading}
             updateLoading={updateLoading}
-            handleCancelBloodPostRequest={handleCancelBloodPostRequest}
+            handleCancelBloodPostRequest={handleCancelRequest}
             filteredRequests={filteredRequests}
             handleUpdateAcceptedBloodRequest={handleUpdateAcceptedBloodRequest}
             handleUpdateRequest={handleUpdateRequest}

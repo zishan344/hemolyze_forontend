@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import authApiClient from "../Service/authApiClient";
 import { Donor } from "../types/Donor/Donor.typ";
 import {
@@ -7,6 +7,7 @@ import {
   BloodRequestItem,
 } from "../types/Dashboard/DonationRequests.types";
 import useAuthContext from "./useAuthContext";
+import { RequestRecord } from "../Component/Dashboard/BloodRequest/BloodRequestType";
 
 const useBloodData = () => {
   const { user } = useAuthContext();
@@ -18,12 +19,40 @@ const useBloodData = () => {
     BloodRequestItem[]
   >([]);
   const [loading, setLoading] = useState(false);
+  const [updateLoading, setUpdateLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filteredDonors, setFilteredDonors] = useState<Donor[]>([]);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [bloodDonationAccepted, setBloodDonationAccepted] = useState<
     acceptedBloodDonations[]
   >([]);
+  const [requestHistory, setRequestHistory] = useState<RequestRecord[]>([]);
+  // fetching my blood request data
+
+  useEffect(() => {
+    fetchOwnBloodRequestData();
+  }, []);
+
+  const fetchOwnBloodRequestData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Call the API endpoint to get user's blood requests
+      const response = await authApiClient.get("/blood-request/my-requests/");
+      setRequestHistory(response.data);
+    } catch (err: unknown | any) {
+      console.error("Error fetching blood requests:", err);
+      setError(
+        err.response?.data?.message ||
+          err.response?.data?.error ||
+          "Failed to load blood request data. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   // fetching donor
   const fetchDonors = async (): Promise<void> => {
     try {
@@ -87,7 +116,6 @@ const useBloodData = () => {
             err.response?.data?.error ||
             "Failed to load accepted requests. Please try again."
         );
-        // We don't set the main error here as it's not critical to the main functionality
       } finally {
         setLoading(false);
       }
@@ -96,7 +124,7 @@ const useBloodData = () => {
   );
 
   const fetchBloodDonationAccepted = useCallback(async () => {
-    setLoading(true);
+    setUpdateLoading(true);
     setError(null);
     try {
       // Get the user's accepted requests
@@ -109,9 +137,8 @@ const useBloodData = () => {
           err.response?.data?.error ||
           "Failed to load accepted requests. Please try again."
       );
-      // We don't set the main error here as it's not critical to the main functionality
     } finally {
-      setLoading(false);
+      setUpdateLoading(false);
     }
   }, []);
 
@@ -180,12 +207,37 @@ const useBloodData = () => {
     }
   };
 
-  // handle blood request status
+  const handleCancelBloodPostRequest = async (requestId: number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await authApiClient.patch(`/blood-request/${requestId}/`, {
+        status: "cancelled",
+      });
+
+      // Update local state to reflect the change
+      setRequestHistory((prevHistory) =>
+        prevHistory.map((req) =>
+          req.id === requestId ? { ...req, status: "cancelled" as const } : req
+        )
+      );
+    } catch (err: unknown | any) {
+      console.error("Error canceling request:", err);
+      setError(
+        err.response?.data?.message ||
+          err.response?.data?.error ||
+          "Failed to cancel request. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // handle update, blood request
   const handleUpdateAcceptedBloodRequest = async (
     requestId: number,
     status: string
   ) => {
-    console.log("coming request for updating accepted table");
     setLoading(true);
     setError(null);
     try {
@@ -195,12 +247,24 @@ const useBloodData = () => {
           donation_status: status,
         }
       );
+      // Show success message
+      setSuccessMessage(`Donation updated successfully!`);
       // Update local state to reflect the change
-      /*  setRequestHistory((prevHistory) =>
-        prevHistory.map((req) =>
-          req.id === requestId ? { ...req, status: "cancelled" as const } : req
-        )
-      ); */
+      if (status === "accepted_by_user") {
+        setRequestHistory((prevHistory) =>
+          prevHistory.map((req) =>
+            req.id === requestId
+              ? { ...req, status: "completed" as const }
+              : req
+          )
+        );
+      } else if (status === "canceled_by_user") {
+        setRequestHistory((prevHistory) =>
+          prevHistory.map((req) =>
+            req.id === requestId ? { ...req, status: "pending" as const } : req
+          )
+        );
+      }
     } catch (err: any) {
       console.error("Error canceling request:", err);
       setError(
@@ -226,8 +290,11 @@ const useBloodData = () => {
     handleRequestAccepted,
     handleUpdateAcceptedBloodRequest,
     fetchBloodDonationAccepted,
+    handleCancelBloodPostRequest,
     bloodDonationAccepted,
+    requestHistory,
     successMessage,
+    updateLoading,
     error,
     loading,
   };

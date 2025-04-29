@@ -3,14 +3,14 @@ import { Activity, CalendarCheck, Droplet, User } from "lucide-react";
 interface StatsCardsProps {
   totalDonations: number;
   upcomingDonations: number;
-  activeRequests: number;
+  totalRequest: number;
   livesImpacted: number;
 }
 
 const StatsCards = ({
   totalDonations,
   upcomingDonations,
-  activeRequests,
+  totalRequest,
   livesImpacted,
 }: StatsCardsProps) => {
   return (
@@ -38,8 +38,8 @@ const StatsCards = ({
           <Activity size={28} className="stroke-accent" />
         </div>
         <div className="stat-title">Blood Requests</div>
-        <div className="stat-value text-accent">{activeRequests}</div>
-        <div className="stat-desc">Active requests</div>
+        <div className="stat-value text-accent">{totalRequest}</div>
+        <div className="stat-desc">Total requests</div>
       </div>
 
       <div className="stat bg-base-100 shadow rounded-lg">

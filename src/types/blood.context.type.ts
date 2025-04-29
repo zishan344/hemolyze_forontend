@@ -5,6 +5,7 @@ import {
   AcceptedRequestItem,
   BloodRequestItem,
 } from "./Dashboard/DonationRequests.types";
+import { RequestRecord } from "../Component/Dashboard/BloodRequest/BloodRequestType";
 
 export interface BloodDataContextType {
   fetchDonors: () => Promise<void>;
@@ -25,8 +26,11 @@ export interface BloodDataContextType {
     status: string
   ) => Promise<void>;
   fetchBloodDonationAccepted: () => Promise<void>;
+  handleCancelBloodPostRequest: (requestId: number) => Promise<void>;
   bloodDonationAccepted: acceptedBloodDonations[];
+  requestHistory: RequestRecord[];
   successMessage: string | null;
   loading: boolean;
+  updateLoading: boolean;
   error: string | null;
 }

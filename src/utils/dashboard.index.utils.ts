@@ -1,7 +1,5 @@
-import {
-  DonationRecord,
-  ReceivedRecord,
-} from "../types/Dashboard/DonationHistory.type";
+import { RequestRecord } from "../Component/Dashboard/BloodRequest/BloodRequestType";
+import { DonationRecord } from "../types/Dashboard/DonationHistory.type";
 
 // Calculate upcoming donations (those with status "scheduled")
 export const upcomingDonations = (donationHistory: DonationRecord[]) => {
@@ -15,10 +13,8 @@ export const totalDonations = (donationHistory: DonationRecord[]) => {
 };
 
 // Count active blood requests (estimate based on received history with pending status)
-export const activeRequests = (receivedHistory: ReceivedRecord[]) => {
-  return receivedHistory.filter(
-    (request) => request.blood_request?.status === "pending"
-  ).length;
+export const totalRequest = (totalRequest: RequestRecord[]) => {
+  return totalRequest.length;
 };
 
 // Estimate lives impacted (total donations + received help)

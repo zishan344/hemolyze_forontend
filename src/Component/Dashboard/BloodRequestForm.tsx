@@ -18,6 +18,7 @@ import {
   RequestRecord,
 } from "./BloodRequest/BloodRequestType";
 import authApiClient from "../../Service/authApiClient";
+import useBloodDataContext from "../../Hooks/useBloodDataContext";
 
 interface BloodRequestFormProps {
   onRequestSubmitted?: () => void;
@@ -37,7 +38,7 @@ const BloodRequestForm = ({
   const [progressPercentage, setProgressPercentage] = useState<number>(
     requestToUpdate?.progress_percentage || 0
   );
-
+  const { requestHistory } = useBloodDataContext();
   const {
     register,
     handleSubmit,
@@ -89,9 +90,21 @@ const BloodRequestForm = ({
           `/blood-request/${requestToUpdate.id}/`,
           requestData
         );
+        console.log(response);
+        // Update the request in the local state
+        const updatedRequest = requestHistory.find(
+          (req) => req.id === requestToUpdate.id
+        );
+        if (updatedRequest) {
+          Object.assign(updatedRequest, requestData); // Update the existing request with new data
+        }
+        setProgressPercentage(response.data.progress_percentage);
         setSuccess("Blood request updated successfully!");
       } else {
         response = await authApiClient.post("/blood-request/", requestData);
+        console.log(response);
+        // should be update locally on the requestHistory
+        requestHistory.unshift(response.data); // Add the new request to the beginning of the list
         setSuccess(
           "Blood request submitted successfully! Donors will be notified."
         );
