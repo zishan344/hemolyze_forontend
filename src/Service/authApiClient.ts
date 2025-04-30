@@ -11,7 +11,16 @@ authApiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("authTokens");
     if (token) {
-      config.headers.Authorization = `JWT ${JSON.parse(token)?.access}`;
+      try {
+        const parsedToken = JSON.parse(token);
+        if (parsedToken?.access) {
+          config.headers.Authorization = `JWT ${parsedToken.access}`;
+        }
+      } catch (error: unknown) {
+        console.error("Invalid token format in localStorage");
+
+        localStorage.removeItem("authTokens");
+      }
     }
     return config;
   },
