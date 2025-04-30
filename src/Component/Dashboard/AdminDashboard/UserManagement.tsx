@@ -1,4 +1,3 @@
-import { Users } from "lucide-react";
 import { userDataType } from "../../../globalType/AuthType";
 import { useEffect, useState } from "react";
 import authApiClient from "../../../Service/authApiClient";

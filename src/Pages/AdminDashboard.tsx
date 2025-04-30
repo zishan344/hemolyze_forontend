@@ -16,11 +16,6 @@ interface Statistics {
   total_blood_donations: number;
   total_pending_requests: number;
   total_fund: number;
-  /*  "New_user": "2025-04-30T12:06:25.979240Z",
-  "Blood_donation_completed": "2025-04-29T17:47:20.354401Z",
-  "Fund_received": "2025-04-28T12:24:30.249927Z",
-  "Emergency_blood_request": "2025-04-29T17:27:10.462705Z" */
-  // Add other fields as needed
   New_user: string;
   Blood_donation_completed: string;
   Fund_received: string;
@@ -79,10 +74,10 @@ const AdminDashboard = () => {
             totalDonations={totalDonation}
             pendingRequests={pendingRequests}
             totalFunds={totalFundAmount}
-            newUser={statics?.New_user}
-            bloodDonationCompleted={statics?.Blood_donation_completed}
-            fundReceived={statics?.Fund_received}
-            emergencyBloodRequest={statics?.Emergency_blood_request}
+            newUser={statics?.New_user || ""}
+            bloodDonationCompleted={statics?.Blood_donation_completed || ""}
+            fundReceived={statics?.Fund_received || ""}
+            emergencyBloodRequest={statics?.Emergency_blood_request || ""}
           />
         );
     }
