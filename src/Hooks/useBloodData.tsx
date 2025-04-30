@@ -30,8 +30,10 @@ const useBloodData = () => {
   // fetching my blood request data
 
   useEffect(() => {
-    fetchOwnBloodRequestData();
-  }, []);
+    if (user) {
+      fetchOwnBloodRequestData();
+    }
+  }, [user]);
 
   const fetchOwnBloodRequestData = useCallback(async () => {
     try {
@@ -208,7 +210,7 @@ const useBloodData = () => {
   };
 
   const handleCancelBloodPostRequest = async (requestId: number) => {
-    setLoading(true);
+    setUpdateLoading(true);
     setError(null);
     try {
       await authApiClient.patch(`/blood-request/${requestId}/`, {
@@ -229,7 +231,7 @@ const useBloodData = () => {
           "Failed to cancel request. Please try again."
       );
     } finally {
-      setLoading(false);
+      setUpdateLoading(false);
     }
   };
 
@@ -238,7 +240,7 @@ const useBloodData = () => {
     requestId: number,
     status: string
   ) => {
-    setLoading(true);
+    setUpdateLoading(true);
     setError(null);
     try {
       await authApiClient.patch(
@@ -273,7 +275,7 @@ const useBloodData = () => {
           "Failed to canceled to  request. Please try again."
       );
     } finally {
-      setLoading(false);
+      setUpdateLoading(false);
     }
   };
 

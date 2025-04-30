@@ -10,14 +10,13 @@ interface BloodRequestListProps {
     status: string
   ) => Promise<void>;
   handleUpdateRequest?: (request: RequestRecord) => void; // Add new prop for update functionality
-  loading: boolean;
+  loading?: boolean;
   updateLoading: boolean;
 }
 
 const BloodRequestList = ({
   filteredRequests,
   handleCancelBloodPostRequest,
-  loading,
   updateLoading,
   handleUpdateAcceptedBloodRequest,
   handleUpdateRequest,
@@ -207,7 +206,7 @@ const BloodRequestList = ({
                       <button
                         onClick={() => handleCancelBloodPostRequest(request.id)}
                         className="btn btn-outline btn-sm btn-error w-full">
-                        {loading ? "cancelling..." : "Cancel Request"}
+                        {updateLoading ? "cancelling..." : "Cancel Request"}
                       </button>
                       <button
                         onClick={() =>
