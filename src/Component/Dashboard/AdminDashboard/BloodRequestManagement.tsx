@@ -35,7 +35,6 @@ const BloodRequestManagement = () => {
               <th>Hospital</th>
               <th>Date Needed</th>
               <th>Status</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -60,12 +59,6 @@ const BloodRequestManagement = () => {
                     }`}>
                     {request.status}
                   </span>
-                </td>
-                <td>
-                  <div className="flex gap-2">
-                    <button className="btn btn-xs btn-info">View</button>
-                    <button className="btn btn-xs btn-error">Delete</button>
-                  </div>
                 </td>
               </tr>
             ))}

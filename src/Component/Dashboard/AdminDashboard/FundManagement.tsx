@@ -75,7 +75,6 @@ const FundManagement = () => {
 
                 <td>
                   <div className="flex gap-2">
-                    <button className="btn btn-xs btn-info">View</button>
                     <button className="btn btn-xs btn-success">Receipt</button>
                   </div>
                 </td>

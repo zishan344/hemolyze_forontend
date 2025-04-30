@@ -1,16 +1,26 @@
 import { AlertCircle, DollarSign, Droplet, Users } from "lucide-react";
+import { getRelativeTime } from "../../../utils/donationHistoryUtils";
 
 interface OverviewProps {
   totalUsers?: number;
   totalDonations: number;
   pendingRequests: number;
   totalFunds: number;
+  newUser: string;
+  bloodDonationCompleted: string;
+  fundReceived: string;
+  emergencyBloodRequest: string;
 }
+
 const Overview = ({
   totalUsers,
   totalDonations,
   pendingRequests,
   totalFunds,
+  newUser,
+  bloodDonationCompleted,
+  fundReceived,
+  emergencyBloodRequest,
 }: OverviewProps) => {
   return (
     <div>
@@ -60,19 +70,27 @@ const Overview = ({
           <ul className="space-y-2">
             <li className="p-2 bg-base-100 rounded flex justify-between">
               <span>New user registration</span>
-              <span className="text-sm text-gray-500">2 hours ago</span>
+              <span className="text-sm text-white">
+                {getRelativeTime(newUser)}
+              </span>
             </li>
             <li className="p-2 bg-base-100 rounded flex justify-between">
               <span>Blood donation completed</span>
-              <span className="text-sm text-gray-500">5 hours ago</span>
+              <span className="text-sm text-white">
+                {getRelativeTime(bloodDonationCompleted)}
+              </span>
             </li>
             <li className="p-2 bg-base-100 rounded flex justify-between">
               <span>Fund donation received</span>
-              <span className="text-sm text-gray-500">Yesterday</span>
+              <span className="text-sm text-white">
+                {getRelativeTime(fundReceived)}
+              </span>
             </li>
             <li className="p-2 bg-base-100 rounded flex justify-between">
               <span>Emergency blood request</span>
-              <span className="text-sm text-gray-500">2 days ago</span>
+              <span className="text-sm text-white">
+                {getRelativeTime(emergencyBloodRequest)}
+              </span>
             </li>
           </ul>
         </div>

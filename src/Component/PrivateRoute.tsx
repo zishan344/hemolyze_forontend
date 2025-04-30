@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 const PrivateRoute = ({ children }: childrenType) => {
   const { user, loading } = useAuthContext();
-  const [countdown, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(5);
   const [redirectNow, setRedirectNow] = useState(false);
 
   useEffect(() => {

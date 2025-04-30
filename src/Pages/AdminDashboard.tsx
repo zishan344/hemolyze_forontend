@@ -16,6 +16,15 @@ interface Statistics {
   total_blood_donations: number;
   total_pending_requests: number;
   total_fund: number;
+  /*  "New_user": "2025-04-30T12:06:25.979240Z",
+  "Blood_donation_completed": "2025-04-29T17:47:20.354401Z",
+  "Fund_received": "2025-04-28T12:24:30.249927Z",
+  "Emergency_blood_request": "2025-04-29T17:27:10.462705Z" */
+  // Add other fields as needed
+  New_user: string;
+  Blood_donation_completed: string;
+  Fund_received: string;
+  Emergency_blood_request: string;
 }
 
 const AdminDashboard = () => {
@@ -29,26 +38,12 @@ const AdminDashboard = () => {
 
   const [activeTab, setActiveTab] = useState<string>("overview");
 
-  /* useEffect(() => {
-    
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await fetchAllDonationData();
-        // await fetchAllUsers();
-      } catch (error) {
-        console.error("Error fetching donation data:", error);
-      }
-    };
-    fetchData();
-  }, []); */
-
   useEffect(() => {
     const fetchAllUsers = async () => {
       setLoading(true);
       try {
         const response = await authApiClient.get("/statistics");
+        console.log(response.data, "response.data");
         setStatics(response.data);
       } catch (error) {
         console.log("fetchAllUsers error", error);
@@ -65,7 +60,7 @@ const AdminDashboard = () => {
   const pendingRequests = statics?.total_pending_requests || 0;
   const totalUsers = statics?.total_users;
   const totalFundAmount = statics?.total_fund || 0;
-
+  // console.log(statics, "statics");
   // Components for each tab
   const renderTabContent = () => {
     switch (activeTab) {
@@ -84,6 +79,10 @@ const AdminDashboard = () => {
             totalDonations={totalDonation}
             pendingRequests={pendingRequests}
             totalFunds={totalFundAmount}
+            newUser={statics?.New_user}
+            bloodDonationCompleted={statics?.Blood_donation_completed}
+            fundReceived={statics?.Fund_received}
+            emergencyBloodRequest={statics?.Emergency_blood_request}
           />
         );
     }

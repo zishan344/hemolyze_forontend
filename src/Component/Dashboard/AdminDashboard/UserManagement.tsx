@@ -7,6 +7,7 @@ import Loadings from "../../../Shared/Loadings";
 const UserManagement = () => {
   const [allUsers, setAllUsers] = useState<userDataType[]>([]);
   const [userLoading, setUserLoading] = useState<boolean>(false);
+  const [loading, setUpdateLoading] = useState<boolean>(false);
   useEffect(() => {
     const fetchAllUsers = async () => {
       setUserLoading(true);
@@ -22,7 +23,10 @@ const UserManagement = () => {
     fetchAllUsers();
   }, []);
 
-  if (userLoading) return <Loadings />;
+  if (userLoading) {
+    return <Loadings />;
+  }
+
   if (allUsers.length === 0) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -30,14 +34,28 @@ const UserManagement = () => {
       </div>
     );
   }
+
+  const handleAdmin = async (userId: number, role: string) => {
+    setUpdateLoading(true);
+    try {
+      const response = await authApiClient.patch(`user-role/${userId}/`, {
+        role,
+      });
+      console.log(response);
+      setAllUsers((prevUsers) =>
+        prevUsers.map((user) => (user.id === userId ? { ...user, role } : user))
+      );
+    } catch (error) {
+      console.log("handleAdmin error", error);
+    } finally {
+      setUpdateLoading(false);
+    }
+  };
+
   return (
     <div>
       <div className="flex justify-between mb-4">
         <h2 className="text-xl font-semibold">User Management</h2>
-        <button className="btn btn-primary btn-sm">
-          <Users size={16} className="mr-2" />
-          Add New User
-        </button>
       </div>
       <div className="overflow-x-auto">
         <table className="table w-full">
@@ -59,8 +77,21 @@ const UserManagement = () => {
                 <td>{user.role}</td>
                 <td>
                   <div className="flex gap-2">
-                    <button className="btn btn-xs btn-info">make admin</button>
-                    <button className="btn btn-xs btn-error">Delete</button>
+                    {user.role === "admin" ? (
+                      <button
+                        disabled={loading}
+                        onClick={() => handleAdmin(user.id, "user")}
+                        className="btn btn-xs btn-error">
+                        remove admin
+                      </button>
+                    ) : (
+                      <button
+                        disabled={loading}
+                        onClick={() => handleAdmin(user.id, "admin")}
+                        className="btn btn-xs btn-info">
+                        make admin
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>

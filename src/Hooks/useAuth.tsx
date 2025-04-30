@@ -238,6 +238,7 @@ const useAuth = () => {
       setLoading(false);
     }
   };
+
   // logout user
   const logoutUser = () => {
     setAuthTokens(null);

@@ -54,7 +54,6 @@ const DonationManagement = () => {
               <th>Units</th>
               <th>Donation Date</th>
               <th>Status</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -77,12 +76,6 @@ const DonationManagement = () => {
                     }`}>
                     {donation.donation_status}
                   </span>
-                </td>
-                <td>
-                  <div className="flex gap-2">
-                    <button className="btn btn-xs btn-info">View</button>
-                    <button className="btn btn-xs">Verify</button>
-                  </div>
                 </td>
               </tr>
             ))}
