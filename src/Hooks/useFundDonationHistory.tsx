@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import authApiClient from "../Service/authApiClient";
 import { FundDonation } from "../types/Dashboard/FundDonation.type";
 import useAuthContext from "./useAuthContext";
@@ -13,7 +13,7 @@ const useFundDonationHistory = () => {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -26,7 +26,7 @@ const useFundDonationHistory = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   return {
     donations,

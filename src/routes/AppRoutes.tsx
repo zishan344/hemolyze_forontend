@@ -3,6 +3,7 @@ import MainLayout from "../Layout/MainLayout";
 import Home from "../Pages/Home";
 import Login from "../Pages/Login";
 import PrivateRoute from "../Component/PrivateRoute";
+import AdminRoute from "../Component/AdminRoute";
 import Dashboard from "../Pages/Dashboard";
 import Register from "../Pages/Register";
 import ForgotPassword from "../Pages/ForgotPassword";
@@ -18,6 +19,7 @@ import Donation from "../Pages/Donation";
 import DashboardLayout from "../Layout/DashboardLayout";
 import PaymentSuccess from "../Pages/PaymentSuccess";
 import FundDonationHistory from "../Component/Dashboard/FundDonationHistory";
+import AdminDashboard from "../Pages/AdminDashboard";
 
 const AppRoutes = () => {
   return (
@@ -60,6 +62,16 @@ const AppRoutes = () => {
         <Route path="fund-history" element={<FundDonationHistory />} />
         <Route path="premium" element={<PremiumMembership />} />
         <Route path="profile" element={<Profile />} />
+
+        {/* Admin Dashboard */}
+        <Route
+          path="admin"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          }
+        />
       </Route>
 
       <Route path="/payment-success" element={<PaymentSuccess />} />

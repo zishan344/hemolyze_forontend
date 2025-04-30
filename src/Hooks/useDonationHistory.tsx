@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  AllDonationRecord,
   DonationHistoryApiResponse,
   DonationRecord,
   ReceivedRecord,
@@ -7,6 +8,7 @@ import {
 import authApiClient from "../Service/authApiClient";
 
 const useDonationHistory = () => {
+  const [AllDonations, setAllDonations] = useState<AllDonationRecord[]>([]);
   const [donationHistory, setDonationHistory] = useState<DonationRecord[]>([]);
   const [receivedHistory, setReceivedHistory] = useState<ReceivedRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -31,6 +33,7 @@ const useDonationHistory = () => {
         (donation) => ({
           id: donation.id,
           recipient_name: donation.recipient_name,
+          donor_name: donation.donor_name,
           blood_group: donation.blood_request.blood_group,
           hospital_name: donation.blood_request.hospital_name,
           hospital_address: "Hospital Address", // Not provided in API response
@@ -71,7 +74,32 @@ const useDonationHistory = () => {
       setLoading(false);
     }
   };
-  return { donationHistory, receivedHistory, loading, error };
+
+  // handle all donations
+
+  const fetchAllDonationData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await authApiClient.get("/all-blood-donation-history/");
+
+      setAllDonations(response.data);
+    } catch (err) {
+      console.error("Error fetching donation history:", err);
+      setError("Failed to load donation history. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    donationHistory,
+    receivedHistory,
+    loading,
+    error,
+    fetchAllDonationData,
+    AllDonations,
+  };
 };
 
 export default useDonationHistory;

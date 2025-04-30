@@ -20,6 +20,8 @@ const useAuth = () => {
   const [successMsg, setSuccessMsg] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
+  // fetch all users
+
   const getToken = () => {
     const token = localStorage.getItem("authTokens");
     return token ? JSON.parse(token) : null;

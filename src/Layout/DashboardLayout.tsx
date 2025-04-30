@@ -11,6 +11,7 @@ import {
   AlertCircle,
   DollarSign,
   LogOut,
+  ShieldCheck,
 } from "lucide-react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import useAuthContext from "../Hooks/useAuthContext";
@@ -70,7 +71,16 @@ const DashboardLayout = () => {
     });
   };
 
-  const navItems = [
+  // Define type for navigation items
+  type NavItem = {
+    path: string;
+    icon: React.ReactElement;
+    label: string;
+    adminOnly?: boolean;
+  };
+
+  // Base navigation items
+  const baseNavItems: NavItem[] = [
     { path: "/dashboard", icon: <BarChart3 size={20} />, label: "Dashboard" },
     {
       path: "/dashboard/requests",
@@ -99,6 +109,18 @@ const DashboardLayout = () => {
       label: "Profile",
     },
   ];
+
+  // Add admin dashboard link for admin users
+  const adminNavItem: NavItem = {
+    path: "/dashboard/admin",
+    icon: <ShieldCheck size={20} />,
+    label: "Admin Dashboard",
+    adminOnly: true,
+  };
+
+  // Combine navigation items based on user role
+  const navItems: NavItem[] =
+    user?.role === "admin" ? [...baseNavItems, adminNavItem] : baseNavItems;
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-base-200">
@@ -193,12 +215,14 @@ const DashboardLayout = () => {
                     location.pathname === item.path
                       ? "bg-primary/10 text-primary"
                       : ""
-                  }`}>
+                  } ${item?.adminOnly ? "text-success font-medium" : ""}`}>
                   <span
                     className={
                       item.path === "/dashboard/premium" &&
                       location.pathname === "/dashboard/premium"
                         ? "text-amber-500"
+                        : item.path === "/dashboard/admin"
+                        ? "text-success"
                         : location.pathname === item.path
                         ? "text-primary"
                         : ""
@@ -232,6 +256,9 @@ const DashboardLayout = () => {
                 <div className="ml-3">
                   <p className="text-sm font-medium">{user.username}</p>
                   <p className="text-xs text-gray-500">{user.email}</p>
+                  {user.role === "admin" && (
+                    <p className="text-xs text-success">Administrator</p>
+                  )}
                 </div>
               </div>
               <button

@@ -3,11 +3,26 @@ export type ViewType = "donated" | "received";
 export interface DonationRecord {
   id: number;
   recipient_name: string;
+  donor_name: string;
   blood_group: string;
   hospital_name: string;
   hospital_address: string;
   donation_date: string;
   status: DonationStatus;
+  units_donated: number;
+  notes?: string;
+  certificate_url?: string;
+  request_id?: number;
+}
+export interface AllDonationRecord {
+  id: number;
+  recipient_name: string;
+  donor_name: string;
+  blood_group: string;
+  hospital_name: string;
+  hospital_address: string;
+  date: string;
+  donation_status: DonationStatus;
   units_donated: number;
   notes?: string;
   certificate_url?: string;
