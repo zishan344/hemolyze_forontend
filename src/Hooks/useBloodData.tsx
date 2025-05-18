@@ -8,6 +8,7 @@ import {
 } from "../types/Dashboard/DonationRequests.types";
 import useAuthContext from "./useAuthContext";
 import { RequestRecord } from "../Component/Dashboard/BloodRequest/BloodRequestType";
+import apiClient from "../Service/apiClient";
 
 const useBloodData = () => {
   const { user } = useAuthContext();
@@ -61,7 +62,7 @@ const useBloodData = () => {
       setLoading(true);
       setError(null);
       // This endpoint is assumed based on your API structure
-      const response = await authApiClient.get("/donar-list/");
+      const response = await apiClient.get("/donar-list/");
       setDonors(response.data);
       setFilteredDonors(response.data);
     } catch (error) {

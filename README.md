@@ -1,54 +1,113 @@
-# React + TypeScript + Vite
+# Hemolyze - Blood Donation Management Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+!Hemolyze
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Hemolyze is a comprehensive blood donation management platform that connects blood donors with recipients in need. The platform facilitates the entire blood donation process from request creation to donation completion, helping save lives through efficient blood supply management.
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### For Blood Recipients
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- **Blood Request System**: Create, update, and manage blood donation requests
+- **Real-time Status Tracking**: Monitor the progress of blood donation requests
+- **Donor Matching**: Get connected with compatible donors based on blood type
+- **Hospital Integration**: Specify hospital details for donation coordination
+
+### For Blood Donors
+
+- **Available Requests**: Browse pending blood donation requests
+- **Donor Profile**: Manage your donor profile with blood type, availability status
+- **Donation History**: Track your past donations with certificates
+- **Scheduled Donations**: Manage upcoming donation appointments
+
+### General Features
+
+- **User Dashboard**: Personalized dashboard showing relevant statistics and activities
+- **Financial Contributions**: Option to donate funds to support blood donation programs
+- **Responsive Design**: Seamless experience across desktop and mobile devices
+- **Dark/Light Mode**: User preference-based theme switching
+
+## Technology Stack
+
+- **Frontend**: React with TypeScript, built with Vite
+- **UI Framework**: Tailwind CSS with DaisyUI for component styling
+- **State Management**: React Context API
+- **Form Handling**: React Hook Form
+- **API Integration**: Axios for HTTP requests
+- **Authentication**: JWT-based authentication system
+- **Notifications**: Toast notifications with react-hot-toast
+- **Backend**: Django with Django REST Framework
+- **Database**: PostgreSQL
+- **API Documentation**: Swagger/OpenAPI integration
+
+## Screenshots
+
+### Dashboard
+
+!Dashboard
+
+### Blood Request Management
+
+The platform allows users to create, track, and manage blood donation requests with different urgency levels.
+
+### Available Donors
+
+Users can browse through available donors filtered by blood type and location.
+
+### Donation History
+
+Track blood donations with detailed history and downloadable certificates.
+
+## Key Components
+
+- **Blood Request System**: Complete workflow for creating, accepting, and fulfilling blood requests
+- **User Profile Management**: Comprehensive profile management with medical details
+- **Admin Dashboard**: Administrative tools for monitoring and managing platform activities
+- **Payment Integration**: Secure payment processing for financial contributions
+
+## Future Enhancements
+
+- Location-based donor matching
+- Mobile app integration
+- Real-time notifications
+- Gamification elements to encourage regular donations
+- Integration with healthcare institution systems
+
+## Installation and Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/hemolyze.git
+
+# Navigate to the project directory
+cd hemolyze
+
+# Frontend Setup
+pnpm install
+pnpm run dev
+
+# Backend Setup
+cd backend
+python -m venv venv
+source venv/bin/activate  # On Windows use: venv\Scripts\activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+
+# Build for production
+pnpm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Contributing
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## License
+
+This project is licensed under the MIT License.
+
+---
+
+Hemolyze - Because every drop counts.
