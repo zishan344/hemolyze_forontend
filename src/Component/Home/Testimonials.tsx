@@ -1,5 +1,7 @@
 import Image from "../Image";
-
+import t1 from "../../assets/testomonial/testo1.jpg";
+import t2 from "../../assets/testomonial/testo2.jpg";
+import t3 from "../../assets/testomonial/testo3.jpg";
 const Testimonials = () => {
   return (
     <section id="testimonials" className="py-16 px-4 md:px-8 lg:px-16">
@@ -16,12 +18,7 @@ const Testimonials = () => {
             <div className="flex items-center mb-4">
               <div className="avatar">
                 <div className="w-12 rounded-full">
-                  <Image
-                    src="/placeholder.svg?height=100&width=100"
-                    alt="Avatar"
-                    width={48}
-                    height={48}
-                  />
+                  <Image src={t1} alt="Avatar" width={48} height={48} />
                 </div>
               </div>
               <div className="ml-4">
@@ -42,12 +39,7 @@ const Testimonials = () => {
             <div className="flex items-center mb-4">
               <div className="avatar">
                 <div className="w-12 rounded-full">
-                  <Image
-                    src="/placeholder.svg?height=100&width=100"
-                    alt="Avatar"
-                    width={48}
-                    height={48}
-                  />
+                  <Image src={t2} alt="Avatar" width={48} height={48} />
                 </div>
               </div>
               <div className="ml-4">
@@ -69,10 +61,11 @@ const Testimonials = () => {
               <div className="avatar">
                 <div className="w-12 rounded-full">
                   <img
-                    src="/placeholder.svg?height=100&width=100"
+                    src={t3}
                     alt="Avatar"
                     width={48}
                     height={48}
+                    className="object-center"
                   />
                 </div>
               </div>
