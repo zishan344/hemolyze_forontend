@@ -13,7 +13,6 @@ export interface BloodDataContextType {
   filteredDonors: Donor[];
   setFilteredDonors: React.Dispatch<React.SetStateAction<Donor[]>>;
   acceptedDonationRequest: AcceptedRequestItem | undefined;
-  fetchAcceptedDonationRequest: (requestId: number) => Promise<void>;
   fetchDonationRequests: () => Promise<void>;
   bloodDonationRequests: BloodRequestItem[];
   handleUpdateDonationStatus: (

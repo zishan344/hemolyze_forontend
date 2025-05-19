@@ -3,7 +3,6 @@ import authApiClient from "../Service/authApiClient";
 import { Donor } from "../types/Donor/Donor.typ";
 import {
   acceptedBloodDonations,
-  AcceptedRequestItem,
   BloodRequestItem,
 } from "../types/Dashboard/DonationRequests.types";
 import useAuthContext from "./useAuthContext";
@@ -13,9 +12,6 @@ import apiClient from "../Service/apiClient";
 const useBloodData = () => {
   const { user } = useAuthContext();
   const [donors, setDonors] = useState<Donor[]>([]);
-  const [acceptedDonationRequest, setAcceptedDonationRequest] = useState<
-    AcceptedRequestItem | undefined
-  >();
   const [bloodDonationRequests, setBloodDonationRequests] = useState<
     BloodRequestItem[]
   >([]);
