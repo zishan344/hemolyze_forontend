@@ -256,7 +256,7 @@ const useBloodData = () => {
     donors,
     filteredDonors,
     setFilteredDonors,
-    acceptedDonationRequest,
+
     fetchDonationRequests,
     bloodDonationRequests,
     handleUpdateDonationStatus,
