@@ -43,7 +43,7 @@ const BloodRequestList = ({
       Math.round((request.fulfilled_units / request.required_units) * 100)
     );
   };
-
+  console.log(filteredRequests);
   return (
     <div className="grid grid-cols-1 gap-6">
       {/* Blood Request List */}
@@ -224,9 +224,9 @@ const BloodRequestList = ({
                       <p className="text-sm text-base-content/70 mb-2">
                         Donor has accepted request
                       </p>
-                      <button className="btn btn-outline btn-sm btn-primary w-full mb-2">
+                      {/* <button className="btn btn-outline btn-sm btn-primary w-full mb-2">
                         Contact Donor
-                      </button>
+                      </button> */}
                       <div className="flex flex-col gap-2 flex-wrap">
                         <button
                           onClick={() =>

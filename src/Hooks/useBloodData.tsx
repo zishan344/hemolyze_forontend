@@ -101,31 +101,6 @@ const useBloodData = () => {
     }
   }, [user?.id]);
 
-  const fetchAcceptedDonationRequest = useCallback(
-    async (requestId: number | undefined = undefined) => {
-      setLoading(true);
-      setError(null);
-      console.log("heare are my request id", requestId);
-      try {
-        // Get the user's accepted requests
-        if (requestId) {
-          const response = await authApiClient.get(`my-donations/${requestId}`);
-          setAcceptedDonationRequest(response.data);
-        }
-      } catch (err: any) {
-        console.error("Error fetching accepted requests:", err);
-        setError(
-          err.response?.data?.message ||
-            err.response?.data?.error ||
-            "Failed to load accepted requests. Please try again."
-        );
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
-
   const fetchBloodDonationAccepted = useCallback(async () => {
     setUpdateLoading(true);
     setError(null);
@@ -160,7 +135,6 @@ const useBloodData = () => {
 
       // Refresh both the requests and accepted requests
       await fetchDonationRequests();
-      await fetchAcceptedDonationRequest(requestId);
 
       // Clear the success message after a delay
       setTimeout(() => {
@@ -191,7 +165,8 @@ const useBloodData = () => {
       );
       // Show success message
       setSuccessMessage(`Donation status updated to "${status}" successfully!`);
-      // Refresh both the requests and accepted requests
+      // Update local state to reflect the change
+      // // Refresh both the requests and accepted requests
       await fetchDonationRequests();
 
       // Clear the success message after a delay
@@ -286,7 +261,6 @@ const useBloodData = () => {
     filteredDonors,
     setFilteredDonors,
     acceptedDonationRequest,
-    fetchAcceptedDonationRequest,
     fetchDonationRequests,
     bloodDonationRequests,
     handleUpdateDonationStatus,
