@@ -2,7 +2,6 @@ import React from "react";
 import { Donor } from "./Donor/Donor.typ";
 import {
   acceptedBloodDonations,
-  AcceptedRequestItem,
   BloodRequestItem,
 } from "./Dashboard/DonationRequests.types";
 import { RequestRecord } from "../Component/Dashboard/BloodRequest/BloodRequestType";
