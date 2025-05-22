@@ -1,4 +1,4 @@
-import { Map } from "lucide-react";
+import { Map, Phone } from "lucide-react";
 import { useEffect, useState } from "react";
 import { bloodGroups } from "../Global/GlobalVar";
 import useBloodDataContext from "../Hooks/useBloodDataContext";
@@ -6,7 +6,8 @@ import SearchFilter from "../Component/Dashboard/AvailableDonors/SearchFilter";
 import CtaSection from "../Component/Dashboard/AvailableDonors/CtaSection";
 import Loadings from "../Shared/Loadings";
 import useAuth from "../Hooks/useAuth";
-
+import Swal from "sweetalert2";
+import { Donor } from "../types/Donor/Donor.typ";
 const AvailableDonors = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBloodGroup, setSelectedBloodGroup] = useState<string>("");
@@ -43,7 +44,27 @@ const AvailableDonors = () => {
 
     setFilteredDonors(filtered);
   }, [searchTerm, selectedBloodGroup, donors, setFilteredDonors]);
-
+  console.log(filteredDonors);
+  const handleContactDonor = (donor: Donor) => {
+    Swal.fire({
+      title: "Contact Donor",
+      text: `Do you want to contact ${donor.name}?`,
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // should be show user number
+        Swal.fire({
+          title: "Contact Number",
+          text: `Phone : ${donor.phone_number}`,
+          icon: "info",
+          confirmButtonText: "OK",
+        });
+      }
+    });
+  };
   return (
     <div className="container mx-auto py-10 px-4">
       <div className="mb-8">
@@ -107,8 +128,11 @@ const AvailableDonors = () => {
                 </div>
 
                 <div className="card-actions mt-4">
-                  <button className="btn btn-primary btn-block">
-                    Contact Donor
+                  <button
+                    onClick={() => handleContactDonor(donor)}
+                    className="btn btn-primary btn-block">
+                    <Phone size={16} className="mr-2 text-gray-200" /> Contact
+                    Donor
                   </button>
                 </div>
               </div>
