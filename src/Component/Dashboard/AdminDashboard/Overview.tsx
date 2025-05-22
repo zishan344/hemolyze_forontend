@@ -70,25 +70,23 @@ const Overview = ({
           <ul className="space-y-2">
             <li className="p-2 bg-base-100 rounded flex justify-between">
               <span>New user registration</span>
-              <span className="text-sm text-white">
-                {getRelativeTime(newUser)}
-              </span>
+              <span className=" text-base">{getRelativeTime(newUser)}</span>
             </li>
             <li className="p-2 bg-base-100 rounded flex justify-between">
               <span>Blood donation completed</span>
-              <span className="text-sm text-white">
+              <span className="text-base">
                 {getRelativeTime(bloodDonationCompleted)}
               </span>
             </li>
             <li className="p-2 bg-base-100 rounded flex justify-between">
               <span>Fund donation received</span>
-              <span className="text-sm text-white">
+              <span className="  text-base">
                 {getRelativeTime(fundReceived)}
               </span>
             </li>
             <li className="p-2 bg-base-100 rounded flex justify-between">
               <span>Emergency blood request</span>
-              <span className="text-sm text-white">
+              <span className=" text-base">
                 {getRelativeTime(emergencyBloodRequest)}
               </span>
             </li>

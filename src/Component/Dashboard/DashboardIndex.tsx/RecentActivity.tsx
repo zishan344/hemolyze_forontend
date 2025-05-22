@@ -80,7 +80,7 @@ const RecentActivity = ({
                             record?.status === "donated"
                               ? "bg-success/10 text-success"
                               : record.status === "pending"
-                              ? "bg-secondary/10 text-secondary"
+                              ? "bg-secondary/50 text-base"
                               : "bg-primary/10 text-primary"
                           } px-2 py-1 rounded`}>
                           {isDonation
@@ -126,7 +126,7 @@ const RecentActivity = ({
                       Scheduled Blood Donation ({donation.blood_group})
                     </p>
                   </div>
-                  <span className="text-xs bg-secondary/10 text-secondary px-2 py-1 rounded">
+                  <span className="bg-secondary/50 text-base px-2 py-1 rounded">
                     {new Date(donation.donation_date).toLocaleDateString()}
                   </span>
                 </div>

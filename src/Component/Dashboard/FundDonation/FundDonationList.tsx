@@ -1,5 +1,10 @@
 import { Calendar, DollarSign, User } from "lucide-react";
-import { FundDonationListProps } from "../../../types/Dashboard/FundDonation.type";
+import {
+  FundDonation,
+  FundDonationListProps,
+} from "../../../types/Dashboard/FundDonation.type";
+import ReceiptModal from "../AdminDashboard/ReceiptModal";
+import { useState } from "react";
 
 const FundDonationList = ({
   donations,
@@ -7,6 +12,10 @@ const FundDonationList = ({
   error,
   isAdmin,
 }: FundDonationListProps) => {
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
+  const [currentReceipt, setCurrentReceipt] = useState<FundDonation | null>(
+    null
+  );
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
@@ -25,6 +34,15 @@ const FundDonationList = ({
     }).format(amount);
   };
 
+  const handleReceipt = (receiptInfo: FundDonation) => {
+    setCurrentReceipt(receiptInfo);
+    setShowReceiptModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowReceiptModal(false);
+    setCurrentReceipt(null);
+  };
   return (
     <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
       <table className="table w-full">
@@ -36,6 +54,7 @@ const FundDonationList = ({
             <th>Amount</th>
             <th>Transaction ID</th>
             <th>Date</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -67,6 +86,18 @@ const FundDonationList = ({
                   <span>{formatDate(donation.created_date)}</span>
                 </div>
               </td>
+              <td>
+                <div className="flex gap-2">
+                  <button
+                    className="btn btn-xs btn-success"
+                    onClick={() => {
+                      // Handle receipt action
+                      handleReceipt(donation);
+                    }}>
+                    Receipt
+                  </button>
+                </div>
+              </td>
             </tr>
           ))}
 
@@ -81,6 +112,12 @@ const FundDonationList = ({
           )}
         </tbody>
       </table>
+      {/* Receipt Modal Component */}
+      <ReceiptModal
+        receiptInfo={currentReceipt}
+        isOpen={showReceiptModal}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };

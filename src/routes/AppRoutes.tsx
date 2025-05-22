@@ -20,16 +20,19 @@ import DashboardLayout from "../Layout/DashboardLayout";
 import PaymentSuccess from "../Pages/PaymentSuccess";
 import FundDonationHistory from "../Component/Dashboard/FundDonationHistory";
 import AdminDashboard from "../Pages/AdminDashboard";
+import TestPdfViewer from "../Component/TestPdfViewer";
 
 const AppRoutes = () => {
   return (
     <Routes>
+      {" "}
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/available-donors" element={<AvailableDonors />} />
+        <Route path="/test-pdf" element={<TestPdfViewer />} />
         <Route
           path="password/reset/confirm/:uid/:token"
           element={<PasswordResetConfirm />}
@@ -46,7 +49,6 @@ const AppRoutes = () => {
           }
         />
       </Route>
-
       {/* Dashboard Routes */}
       <Route
         path="dashboard"
@@ -73,7 +75,6 @@ const AppRoutes = () => {
           }
         />
       </Route>
-
       <Route path="/payment-success" element={<PaymentSuccess />} />
       <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>

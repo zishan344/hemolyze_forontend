@@ -1,10 +1,17 @@
 import useFundDonationHistory from "../../../Hooks/useFundDonationHistory";
 import Loadings from "../../../Shared/Loadings";
-
+import { FundDonation } from "../../../types/Dashboard/FundDonation.type";
+import { useState } from "react";
 import ErrorAlert from "../../ErrorAlert";
+import ReceiptModal from "./ReceiptModal";
 
 const FundManagement = () => {
   const { donations: funds, loading, error } = useFundDonationHistory();
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
+  const [currentReceipt, setCurrentReceipt] = useState<FundDonation | null>(
+    null
+  );
+
   if (loading) {
     return <Loadings />;
   }
@@ -20,6 +27,17 @@ const FundManagement = () => {
   if (error) {
     return <ErrorAlert message={error} />;
   }
+
+  const handleReceipt = (receiptInfo: FundDonation) => {
+    setCurrentReceipt(receiptInfo);
+    setShowReceiptModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowReceiptModal(false);
+    setCurrentReceipt(null);
+  };
+
   return (
     <div>
       <div className="flex justify-between mb-4">
@@ -75,7 +93,11 @@ const FundManagement = () => {
 
                 <td>
                   <div className="flex gap-2">
-                    <button className="btn btn-xs btn-success">Receipt</button>
+                    <button
+                      className="btn btn-xs btn-success"
+                      onClick={() => handleReceipt(fund)}>
+                      Receipt
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -83,6 +105,13 @@ const FundManagement = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Receipt Modal Component */}
+      <ReceiptModal
+        receiptInfo={currentReceipt}
+        isOpen={showReceiptModal}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };

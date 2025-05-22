@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin "daisyui";
+@import "./assets/animations.css";
 
 @plugin "daisyui/theme" {
   /* Dark Mode */
