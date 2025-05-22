@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import useAuthContext from "../Hooks/useAuthContext";
+import DarkMode from "../Component/DarkMode";
 
 import { Toaster } from "react-hot-toast";
 
@@ -127,19 +128,22 @@ const DashboardLayout = () => {
       {/* Mobile Top Navigation */}
       {isMobile && (
         <div className="bg-base-100 w-full p-2 shadow-lg z-10 fixed top-0 left-0">
+          {" "}
           <div className="flex justify-between items-center">
             <Link to="/" className="flex items-center">
               <Heart className="h-6 w-6 fill-primary stroke-white mr-2" />
               <span className="text-xl font-bold text-primary">Hemolyze</span>
             </Link>
 
-            <button
-              onClick={toggleSidebar}
-              className="p-2 rounded-full hover:bg-base-300">
-              {isSidebarOpen ? <X size={18} /> : <Menu size={18} />}
-            </button>
+            <div className="flex items-center gap-2">
+              <DarkMode compact={true} />
+              <button
+                onClick={toggleSidebar}
+                className="p-2 rounded-full hover:bg-base-300">
+                {isSidebarOpen ? <X size={18} /> : <Menu size={18} />}
+              </button>
+            </div>
           </div>
-
           {/* Mobile Horizontal Navigation */}
           {isSidebarOpen && (
             <div className="overflow-x-auto pb-2 pt-4">
@@ -184,6 +188,7 @@ const DashboardLayout = () => {
         className={`bg-base-100 shadow-lg transition-all duration-300 flex flex-col ${
           isSidebarOpen ? "md:w-64" : "md:w-20"
         } ${isMobile ? "hidden" : "fixed h-full"}`}>
+        {" "}
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-4 border-b border-base-300">
           <Link to="/">
@@ -197,13 +202,17 @@ const DashboardLayout = () => {
             )}
           </Link>
 
-          <button
-            onClick={toggleSidebar}
-            className="p-2 rounded-full hover:bg-base-300">
-            {isSidebarOpen ? <X size={18} /> : <Menu size={18} />}
-          </button>
-        </div>
+          <div className="flex items-center gap-2">
+            {/* Dark Mode Toggle */}
+            {isSidebarOpen && <DarkMode compact={true} />}
 
+            <button
+              onClick={toggleSidebar}
+              className="p-2 rounded-full hover:bg-base-300">
+              {isSidebarOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
+        </div>
         {/* Sidebar Navigation */}
         <nav className="flex-1 overflow-y-auto py-4">
           <ul className="space-y-2 px-2">
@@ -244,7 +253,6 @@ const DashboardLayout = () => {
             )}
           </ul>
         </nav>
-
         {/* User Info */}
         {user && isSidebarOpen && (
           <div className="p-4 border-t border-base-300">

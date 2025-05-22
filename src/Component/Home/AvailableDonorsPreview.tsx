@@ -1,8 +1,9 @@
-import { ArrowUpRight, Map } from "lucide-react";
+import { ArrowUpRight, Map, Phone } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useBloodDataContext from "../../Hooks/useBloodDataContext";
 import { UserDetailsDataType } from "../../globalType/AuthType";
+import handleContactDonor from "../../utils/availableDonors.utils";
 
 const AvailableDonorsPreview = () => {
   const { fetchDonors, donors, loading, error } = useBloodDataContext();
@@ -102,8 +103,10 @@ const AvailableDonorsPreview = () => {
                   </div>
 
                   <div className="card-actions justify-end mt-4">
-                    <button className="btn btn-sm btn-outline btn-primary">
-                      contact donor
+                    <button
+                      onClick={() => handleContactDonor(donor)}
+                      className="btn btn-sm btn-outline btn-primary">
+                      <Phone size={16} className=" mr-2" /> contact donor
                     </button>
                   </div>
                 </div>
