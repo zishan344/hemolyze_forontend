@@ -44,21 +44,25 @@ Hemolyze is a comprehensive blood donation management platform that connects blo
 
 ## Screenshots
 
-### Dashboard
+Here are some screenshots of the Hemolyze platform:
 
-!Dashboard
+![Screenshot 1](screenshots/ss1.png)
 
-### Blood Request Management
+![Screenshot 2](screenshots/ss2.png)
 
-The platform allows users to create, track, and manage blood donation requests with different urgency levels.
+![Screenshot 3](screenshots/ss3.png)
 
-### Available Donors
+![Screenshot 4](screenshots/ss4.png)
 
-Users can browse through available donors filtered by blood type and location.
+![Screenshot 5](screenshots/ss5.png)
 
-### Donation History
+![Screenshot 6](screenshots/ss6.png)
 
-Track blood donations with detailed history and downloadable certificates.
+![Screenshot 7](screenshots/ss7.png)
+
+![Screenshot 8](screenshots/ss8.png)
+
+![Screenshot 9](screenshots/ss9.png)
 
 ## Key Components
 
