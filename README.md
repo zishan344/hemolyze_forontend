@@ -1,7 +1,7 @@
 # Hemolyze - Blood Donation Management Platform
 
 !Hemolyze
-
+## Hemolyze server link: [server](https://github.com/zishan344/hemolyze).
 ## Overview
 
 Hemolyze is a comprehensive blood donation management platform that connects blood donors with recipients in need. The platform facilitates the entire blood donation process from request creation to donation completion, helping save lives through efficient blood supply management.
